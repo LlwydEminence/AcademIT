@@ -2,13 +2,14 @@ package ru.academits.streltsov.range.main;
 
 import ru.academits.streltsov.range.Range;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Range range = new Range(2, 16);
-        Range range1 = new Range(1, 19);
+        Range range = new Range(1, 29);
+        Range range1 = new Range(2, 22);
         Scanner scanner = new Scanner(System.in);
         scanner.useLocale(Locale.US);
 
@@ -30,19 +31,20 @@ public class Main {
         }
 
         Range[] union = range.getUnion(range1);
-        if (union.length == 2) {
-            System.out.printf("Границы объединения: (%.2f, %.2f), (%.2f, %.2f)%n", union[0].getFrom(), union[0].getTo(), union[1].getFrom(), union[1].getTo());
-        } else {
-            System.out.printf("Границы объединения: (%.2f, %.2f)%n", union[0].getFrom(), union[0].getTo());
+        System.out.print("Границы объединения: ");
+        for (Range e : union) {
+            System.out.printf("(%.2f, %.2f)", e.getFrom(), e.getTo());
         }
+        System.out.println();
 
         Range[] difference = range.getDifference(range1);
         if (difference.length == 0) {
             System.out.println("Разность равна нулю.");
-        } else if (difference.length == 1) {
-            System.out.printf("Границы разности: (%.2f, %.2f)", difference[0].getFrom(), difference[0].getTo());
         } else {
-            System.out.printf("Границы разности: (%.2f, %.2f), (%.2f, %.2f)", difference[0].getFrom(), difference[0].getTo(), difference[1].getFrom(), difference[1].getTo());
+            System.out.print("Границы разности: ");
+            for (Range e : difference) {
+                System.out.printf("(%.2f, %.2f)", e.getFrom(), e.getTo());
+            }
         }
     }
 }

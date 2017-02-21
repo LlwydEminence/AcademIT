@@ -34,20 +34,14 @@ public class Range {
     }
 
     private boolean isIntersection(Range range) {
-        return  ((this.from <= range.from && this.to >= range.from) ||(range.from <= this.from && range.to >= this.from));
+        return  (Math.min(this.to, range.to) - Math.max(this.from, range.from) > 0);
     }
 
     public Range getIntersection(Range range) {
         if (!this.isIntersection(range)) {
             return null;
-        } else if (this.from <= range.from && this.to >= range.from && this.to <= range.to) {
-            return new Range(range.from, this.to);
-        } else if (this.from <= range.from && this.to >= range.from && range.to <= this.to) {
-            return new Range(range.from, range.to);
-        } else if (range.from <= this.from && range.to >= this.from && range.to <= this.to) {
-            return new Range(this.from, range.to);
         } else {
-            return new Range(this.from, this.to);
+            return (new Range(Math.max(this.from, range.from), Math.min(this.to, range.to)));
         }
     }
 
@@ -59,43 +53,31 @@ public class Range {
             return union;
         } else {
             Range[] union = new Range[1];
-            if (this.from <= range.from && this.to >= range.to) {
-                union[0] = new Range(this.from, this.to);
-                return union;
-            } else if (this.from <= range.from && range.to >= this.to) {
-                union[0] = new Range(this.from, range.to);
-                return union;
-            } else if (range.from <= this.from && range.to >= this.to) {
-                union[0] = new Range(range.from, range.to);
-                return union;
-            } else {
-                union[0] = new Range(range.from, this.to);
-                return union;
-            }
+            union[0] = new Range(Math.min(this.from, range.from), Math.max(this.to, range.to));
+            return union;
         }
     }
 
     public Range[] getDifference(Range range) {
-        Range[] difference = new Range[0];
         if (!this.isIntersection(range)) {
-            difference = new Range[1];
+            Range[] difference = new Range[1];
             difference[0] = new Range(this.from, this.to);
             return difference;
-        } else if (this.from <= range.from && this.to >= range.from && this.to <= range.to) {
-            difference = new Range[1];
-            difference[0] = new Range(this.from, range.from);
-            return difference;
-        } else if (this.from >= range.from && range.to <= this.to) {
-            difference = new Range[1];
-            difference[0] = new Range(range.to, this.to);
-            return difference;
         } else if (this.from <= range.from && this.to >= range.to) {
-            difference = new Range[2];
+            Range[] difference = new Range[2];
             difference[0] = new Range(this.from, range.from);
             difference[1] = new Range(range.to, this.to);
             return difference;
-        } else {
+        } else if (this.from <= range.from && this.to <= range.to) {
+            Range[] difference = new Range[1];
+            difference[0] = new Range(this.from, range.from);
             return difference;
+        } else if (range.from <= this.from && this.to >= range.to) {
+            Range[] difference = new Range[1];
+            difference[0] = new Range(range.to, this.to);
+            return difference;
+        } else {
+            return new Range[0];
         }
     }
 }
