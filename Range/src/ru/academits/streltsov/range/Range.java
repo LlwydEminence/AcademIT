@@ -47,27 +47,21 @@ public class Range {
 
     public Range[] getUnion(Range range) {
         if (!this.isIntersection(range)) {
-            Range[] union = {new Range(this.from, this.to), new Range(range.from, range.to)};
-            return union;
+            return new Range[]{new Range(this.from, this.to), new Range(range.from, range.to)};
         } else {
-            Range[] union = {new Range(Math.min(this.from, range.from), Math.max(this.to, range.to))};
-            return union;
+            return new Range[]{new Range(Math.min(this.from, range.from), Math.max(this.to, range.to))};
         }
     }
 
     public Range[] getDifference(Range range) {
         if (!this.isIntersection(range)) {
-            Range[] difference = {new Range(this.from, this.to)};
-            return difference;
+            return new Range[]{new Range(this.from, this.to)};
         } else if (this.from <= range.from && this.to <= range.to) {
-            Range[] difference = {new Range(this.from, range.from)};
-            return difference;
+            return new Range[]{new Range(this.from, range.from)};
         } else if (this.from <= range.from && this.to >= range.to) {
-            Range[] difference = {new Range(this.from, range.from), new Range(range.to, this.to)};
-            return difference;
+            return new Range[]{new Range(this.from, range.from), new Range(range.to, this.to)};
         } else if (range.from <= this.from && this.to >= range.to) {
-            Range[] difference = {new Range(range.to, this.to)};
-            return difference;
+            return new Range[]{new Range(range.to, this.to)};
         } else {
             return new Range[0];
         }
