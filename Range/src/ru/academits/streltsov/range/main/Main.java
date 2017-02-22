@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Range range = new Range(1, 29);
-        Range range1 = new Range(3, 29);
+        Range range1 = new Range(3, 21);
         Scanner scanner = new Scanner(System.in);
         scanner.useLocale(Locale.US);
 
@@ -32,7 +32,7 @@ public class Main {
 
         Range[] union = range.getUnion(range1);
         System.out.print("Границы объединения: ");
-        System.out.println(Range.toString(union));
+        System.out.println(Arrays.toString(union));
 
 
         Range[] difference = range.getDifference(range1);
@@ -40,7 +40,7 @@ public class Main {
             System.out.println("Разность равна нулю.");
         } else {
             System.out.print("Границы разности: ");
-            System.out.println(Range.toString(difference));
+            System.out.println(Arrays.toString(range.getDifference(range1)));
         }
     }
 }
