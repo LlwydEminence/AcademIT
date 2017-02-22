@@ -34,7 +34,7 @@ public class Range {
     }
 
     private boolean isIntersection(Range range) {
-        return  (Math.min(this.to, range.to) - Math.max(this.from, range.from) > 0);
+        return  (this.from < range.to && this.to > range.from);
     }
 
     public Range getIntersection(Range range) {
@@ -63,14 +63,14 @@ public class Range {
             Range[] difference = new Range[1];
             difference[0] = new Range(this.from, this.to);
             return difference;
+        } else if (this.from <= range.from && this.to <= range.to) {
+            Range[] difference = new Range[1];
+            difference[0] = new Range(this.from, range.from);
+            return difference;
         } else if (this.from <= range.from && this.to >= range.to) {
             Range[] difference = new Range[2];
             difference[0] = new Range(this.from, range.from);
             difference[1] = new Range(range.to, this.to);
-            return difference;
-        } else if (this.from <= range.from && this.to <= range.to) {
-            Range[] difference = new Range[1];
-            difference[0] = new Range(this.from, range.from);
             return difference;
         } else if (range.from <= this.from && this.to >= range.to) {
             Range[] difference = new Range[1];
@@ -78,6 +78,30 @@ public class Range {
             return difference;
         } else {
             return new Range[0];
+        }
+    }
+
+    public static String toString(Range[] range) {
+        if (range == null) {
+            return "null";
+        }
+        int iMax = range.length - 1;
+        if (iMax == -1) {
+            return "[]";
+        }
+
+        StringBuilder a = new StringBuilder();
+        a.append('[');
+        for (int i = 0; ; ++i) {
+            a.append('(');
+            a.append(range[i].from);
+            a.append(", ");
+            a.append(range[i].to);
+            a.append(')');
+            if (i == iMax) {
+                return a.append(']').toString();
+            }
+            a.append(", ");
         }
     }
 }

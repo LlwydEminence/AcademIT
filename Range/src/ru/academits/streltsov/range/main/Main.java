@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Range range = new Range(1, 29);
-        Range range1 = new Range(2, 22);
+        Range range1 = new Range(3, 29);
         Scanner scanner = new Scanner(System.in);
         scanner.useLocale(Locale.US);
 
@@ -27,24 +27,20 @@ public class Main {
         if (intersection == null) {
             System.out.println("Интервалы не пересекаются.");
         } else {
-            System.out.printf("Границы пересечения: (%.2f, %.2f)%n", intersection.getFrom(), intersection.getTo());
+            System.out.printf("Границы пересечения: [(%.2f, %.2f)]%n", intersection.getFrom(), intersection.getTo());
         }
 
         Range[] union = range.getUnion(range1);
         System.out.print("Границы объединения: ");
-        for (Range e : union) {
-            System.out.printf("(%.2f, %.2f)", e.getFrom(), e.getTo());
-        }
-        System.out.println();
+        System.out.println(Range.toString(union));
+
 
         Range[] difference = range.getDifference(range1);
         if (difference.length == 0) {
             System.out.println("Разность равна нулю.");
         } else {
             System.out.print("Границы разности: ");
-            for (Range e : difference) {
-                System.out.printf("(%.2f, %.2f)", e.getFrom(), e.getTo());
-            }
+            System.out.println(Range.toString(difference));
         }
     }
 }
