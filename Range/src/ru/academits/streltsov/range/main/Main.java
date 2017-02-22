@@ -27,7 +27,8 @@ public class Main {
         if (intersection == null) {
             System.out.println("Интервалы не пересекаются.");
         } else {
-            System.out.printf("Границы пересечения: [(%.2f, %.2f)]%n", intersection.getFrom(), intersection.getTo());
+            System.out.print("Границы пересечения: ");
+            System.out.println(intersection.toString());
         }
 
         Range[] union = range.getUnion(range1);
