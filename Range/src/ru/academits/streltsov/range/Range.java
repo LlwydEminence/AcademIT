@@ -1,10 +1,15 @@
 package ru.academits.streltsov.range;
 
+import ru.academits.streltsov.range.exceptions.InvalidIntervalException;
+
 public class Range {
     private double from;
     private double to;
 
     public Range(double from, double to) {
+        if (from > to) {
+            throw new InvalidIntervalException("Конец должен быть больше начала!");
+        }
         this.from = from;
         this.to = to;
     }
@@ -18,10 +23,16 @@ public class Range {
     }
 
     public void setFrom(double from) {
+        if (from > this.to) {
+            throw new InvalidIntervalException("Конец должен быть больше начала!");
+        }
         this.from = from;
     }
 
     public void setTo(double to) {
+        if (to < this.from) {
+            throw new InvalidIntervalException("Конец должен быть больше начала!");
+        }
         this.to = to;
     }
 
