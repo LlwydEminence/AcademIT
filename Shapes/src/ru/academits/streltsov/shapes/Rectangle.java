@@ -56,7 +56,11 @@ public class Rectangle implements Shape {
 
     @Override
     public int hashCode() {
-        return Objects.hash(width, height);
+        final int prime = 37;
+        int hash = 1;
+        hash = prime * hash + (int) width;
+        hash = prime * hash + (int) height;
+        return hash;
     }
 
     @Override

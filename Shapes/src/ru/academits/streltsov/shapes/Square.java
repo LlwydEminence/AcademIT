@@ -48,7 +48,7 @@ public class Square implements Shape {
     }
 
     public int hashCode() {
-        return Objects.hash(sideLength);
+        return 37 + (int) sideLength;
     }
 
     public String toString() {

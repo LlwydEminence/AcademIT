@@ -68,7 +68,7 @@ public class Triangle implements Shape {
     }
 
 
-    private double calculateSideLength(double x1, double y1, double x2, double y2) {
+    private static double calculateSideLength(double x1, double y1, double x2, double y2) {
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 
@@ -110,7 +110,15 @@ public class Triangle implements Shape {
 
     @Override
     public int hashCode() {
-        return Objects.hash(x1, x2, x3, y1, y2, y3);
+        final int prime = 37;
+        int hash = 1;
+        hash = prime * hash + (int) x1;
+        hash = prime * hash + (int) x2;
+        hash = prime * hash + (int) x3;
+        hash = prime * hash + (int) y1;
+        hash = prime * hash + (int) y2;
+        hash = prime * hash + (int) y3;
+        return hash;
     }
 
     @Override
