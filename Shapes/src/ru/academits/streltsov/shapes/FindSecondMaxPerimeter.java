@@ -1,22 +1,11 @@
 package ru.academits.streltsov.shapes;
 
-public class FindSecondMaxPerimeter {
-    public static Shape findSecondMaxPerimeter(Shape[] shapes) {
-        Shape max = shapes[0];
-        int maxIndex = 0;
-        for (int i = 1; i < shapes.length; ++i) {
-            if (shapes[i].getPerimeter() > max.getPerimeter()) {
-                max = shapes[i];
-                maxIndex = i;
-            }
-        }
+import java.util.ArrayList;
+import java.util.Comparator;
 
-        Shape secondMax = shapes[0];
-        for (int i = 1; i < shapes.length; ++i) {
-            if (i != maxIndex && shapes[i].getPerimeter() > secondMax.getPerimeter()) {
-                secondMax = shapes[i];
-            }
-        }
-        return secondMax;
+public class FindSecondMaxPerimeter {
+    public static <T> T findSecondMaxPerimeter(ArrayList<T> list, Comparator<T> comparator) {
+        QuickSort.quickSort(list, 0, list.size() - 1, comparator);
+        return list.get(list.size() - 2);
     }
 }

@@ -67,6 +67,11 @@ public class Triangle implements Shape {
         this.y3 = y3;
     }
 
+
+    private double calculateSideLength(double x1, double y1, double x2, double y2) {
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    }
+
     @Override
     public double getWidth() {
         return Math.max(Math.max(x1, x2), x3) - Math.min(Math.min(x1, x2), x3);
@@ -77,26 +82,15 @@ public class Triangle implements Shape {
         return Math.max(Math.max(y1, y2), y3) - Math.min(Math.min(y1, y2), y3);
     }
 
-    private double calculateSideAB() {
-        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-    }
-
-    private double calculateSideBC() {
-        return Math.sqrt(Math.pow(x3 - x2, 2) + Math.pow(y3 - y2, 2));
-    }
-
-    private double calculateSideAC() {
-        return Math.sqrt(Math.pow(x3 - x1, 2) + Math.pow(y3 - y1, 2));
-    }
-
     @Override
     public double getPerimeter() {
-        return calculateSideAB() + calculateSideBC() + calculateSideAC();
+        return calculateSideLength(x1, y1, x2, y2) + calculateSideLength(x2, y2, x3, y3) + calculateSideLength(x1, y1, x3, y3);
     }
 
     @Override
     public double getArea() {
-        return Math.sqrt(getPerimeter() / 2 * (getPerimeter() / 2 - calculateSideAB()) * (getPerimeter() / 2 - calculateSideBC()) * (getPerimeter() / 2 - calculateSideAC()));
+        double perimeter = getPerimeter();
+        return Math.sqrt(perimeter / 2 * (perimeter / 2 - calculateSideLength(x1, y1, x2, y2)) * (perimeter/ 2 - calculateSideLength(x2, y2, x3, y3)) * (perimeter / 2 - calculateSideLength(x1, y1, x3, y3)));
     }
 
     @Override
