@@ -6,12 +6,11 @@ public class Vector {
     private double[] coordinates;
 
     public Vector(int size) {
-
-            if (size <= 0) {
-                throw new IllegalArgumentException("Размер вектора не может быть меньше 1!");
-            } else {
-                coordinates = new double[size];
-            }
+        if (size <= 0) {
+            throw new IllegalArgumentException("Размер вектора не может быть меньше 1!");
+        } else {
+            coordinates = new double[size];
+        }
     }
 
     public Vector(Vector vector) {
@@ -19,11 +18,11 @@ public class Vector {
     }
 
     public Vector(double[] coordinates) {
-            if (coordinates.length == 0) {
-                throw new IllegalArgumentException("Массив не должен быть нулевой длины!");
-            }
+        if (coordinates.length == 0) {
+            throw new IllegalArgumentException("Массив не должен быть нулевой длины!");
+        }
 
-            this.coordinates = Arrays.copyOf(coordinates, coordinates.length);
+        this.coordinates = Arrays.copyOf(coordinates, coordinates.length);
 
     }
 
