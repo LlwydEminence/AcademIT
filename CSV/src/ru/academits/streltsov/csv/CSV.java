@@ -1,12 +1,16 @@
 package ru.academits.streltsov.csv;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class CSV {
     private static final char COMMA = ',';
     private static final char QUOTE = '"';
 
-    public static void convertCSVLineToHTMLTable(ArrayList<String> list, int listIndex, String csvLine) {
+    private static void convertCSVLineToHTMLTable(ArrayList<String> list, int listIndex, String csvLine) {
         StringBuilder currentString = new StringBuilder();
         boolean inQuotes = false;
 
@@ -33,7 +37,7 @@ public class CSV {
                     }
                 } else if (i == chars.length - 1) {
                     currentString.append(chars[i]);
-                    currentString.append(System.lineSeparator());
+                    currentString.append("<br>");
                     isLineSeparator = true;
                 } else {
                     currentString.append(chars[i]);
@@ -61,5 +65,26 @@ public class CSV {
         }
 
         list.add(currentString.toString());
+    }
+
+    public static void createHTMLFromCSVFile(String inputFileName, String outputFileName) throws FileNotFoundException {
+        try(Scanner scanner = new Scanner(new FileInputStream(inputFileName));
+            PrintWriter printWriter = new PrintWriter(outputFileName)) {
+            printWriter.print("<html><head><title>Файл CSV в формате HTML</title><meta charset = \"utf-8\"></head><body><table>");
+
+            ArrayList<String> list = new ArrayList<>();
+            int index = 0;
+
+            while (scanner.hasNext()) {
+                convertCSVLineToHTMLTable(list, index, scanner.nextLine());
+                ++index;
+            }
+
+            for (String e : list) {
+                printWriter.print(e);
+            }
+
+            printWriter.print("</table></body></html>");
+        }
     }
 }
