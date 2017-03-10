@@ -36,11 +36,27 @@ public class CSV {
                         inQuotes = false;
                     }
                 } else if (i == chars.length - 1) {
-                    currentString.append(chars[i]);
+                    if (chars[i] == '<') {
+                        currentString.append("&lt");
+                    } else if (chars[i] == '>') {
+                        currentString.append("&gt");
+                    } else if (chars[i] == '&') {
+                        currentString.append("&amp");
+                    } else {
+                        currentString.append(chars[i]);
+                    }
                     currentString.append("<br>");
                     isLineSeparator = true;
                 } else {
-                    currentString.append(chars[i]);
+                    if (chars[i] == '<') {
+                        currentString.append("&lt");
+                    } else if (chars[i] == '>') {
+                        currentString.append("&gt");
+                    } else if (chars[i] == '&') {
+                        currentString.append("&amp");
+                    } else {
+                        currentString.append(chars[i]);
+                    }
                 }
             } else {
                 if (chars[i] == QUOTE && i == chars.length - 1) {
@@ -52,10 +68,26 @@ public class CSV {
                 } else if (chars[i] == COMMA) {
                     currentString.append("</td><td>");
                 } else if (i == chars.length - 1) {
-                    currentString.append(chars[i]);
+                    if (chars[i] == '<') {
+                        currentString.append("&lt");
+                    } else if (chars[i] == '>') {
+                        currentString.append("&gt");
+                    } else if (chars[i] == '&') {
+                        currentString.append("&amp");
+                    } else {
+                        currentString.append(chars[i]);
+                    }
                     currentString.append("</td>");
                 } else {
-                    currentString.append(chars[i]);
+                    if (chars[i] == '<') {
+                        currentString.append("&lt");
+                    } else if (chars[i] == '>') {
+                        currentString.append("&gt");
+                    } else if (chars[i] == '&') {
+                        currentString.append("&amp");
+                    } else {
+                        currentString.append(chars[i]);
+                    }
                 }
             }
         }
@@ -70,7 +102,7 @@ public class CSV {
     public static void createHTMLFromCSVFile(String inputFileName, String outputFileName) throws FileNotFoundException {
         try(Scanner scanner = new Scanner(new FileInputStream(inputFileName));
             PrintWriter printWriter = new PrintWriter(outputFileName)) {
-            printWriter.print("<html><head><title>Файл CSV в формате HTML</title><meta charset = \"utf-8\"></head><body><table>");
+            printWriter.print("<html><head><title>Файл CSV в формате HTML</title><meta charset=\"utf-8\"></head><body><table border=\"1\">");
 
             ArrayList<String> list = new ArrayList<>();
             int index = 0;
