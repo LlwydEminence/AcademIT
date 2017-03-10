@@ -6,11 +6,12 @@ public class Vector {
     private double[] coordinates;
 
     public Vector(int size) {
-        if (size <= 0) {
-            throw new IllegalArgumentException();
-        } else {
-            coordinates = new double[size];
-        }
+
+            if (size <= 0) {
+                throw new IllegalArgumentException("Размер вектора не может быть меньше 1!");
+            } else {
+                coordinates = new double[size];
+            }
     }
 
     public Vector(Vector vector) {
@@ -18,11 +19,12 @@ public class Vector {
     }
 
     public Vector(double[] coordinates) {
-        if (coordinates.length == 0) {
-            throw new IllegalArgumentException();
-        }
+            if (coordinates.length == 0) {
+                throw new IllegalArgumentException("Массив не должен быть нулевой длины!");
+            }
 
-        this.coordinates = Arrays.copyOf(coordinates, coordinates.length);
+            this.coordinates = Arrays.copyOf(coordinates, coordinates.length);
+
     }
 
     public Vector(int size, double[] coordinates) {
@@ -35,10 +37,6 @@ public class Vector {
 
     private int getSize() {
         return coordinates.length;
-    }
-
-    public double[] getCoordinates() {
-        return coordinates;
     }
 
     @Override
@@ -155,7 +153,7 @@ public class Vector {
 
         double composition = 0;
         for (int i = 0; i < Math.max(vector1.getSize(), vector2.getSize()); ++i) {
-            composition += vector1.coordinates[i] * vector2.coordinates[2];
+            composition += vector1.getCoordinate(i) * vector2.getCoordinate(i);
         }
         return composition;
     }
