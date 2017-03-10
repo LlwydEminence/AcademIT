@@ -28,7 +28,7 @@ public class Vector {
 
     public Vector(int size, double[] coordinates) {
         if (size <= 0 || coordinates.length == 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Длина массива должна быть больше нуля, размерность ветора не меньше 1!");
         } else {
             this.coordinates = Arrays.copyOf(coordinates, size);
         }
@@ -144,14 +144,9 @@ public class Vector {
     }
 
     public static double composition(Vector vector1, Vector vector2) {
-        if (vector1.getSize() < vector2.getSize()) {
-            vector1.reCreateArray(vector1.coordinates, vector2.getSize());
-        } else if (vector1.getSize() > vector2.getSize()) {
-            vector2.reCreateArray(vector2.coordinates, vector1.getSize());
-        }
-
         double composition = 0;
-        for (int i = 0; i < Math.max(vector1.getSize(), vector2.getSize()); ++i) {
+        int minSize = Math.min(vector1.getSize(), vector2.getSize());
+        for (int i = 0; i < minSize; ++i) {
             composition += vector1.getCoordinate(i) * vector2.getCoordinate(i);
         }
         return composition;
