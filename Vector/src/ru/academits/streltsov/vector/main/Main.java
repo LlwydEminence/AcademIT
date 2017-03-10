@@ -1,6 +1,6 @@
-package ru.academits.streltsov.Vector.main;
+package ru.academits.streltsov.vector.main;
 
-import ru.academits.streltsov.Vector.Vector;
+import ru.academits.streltsov.vector.Vector;
 
 public class Main {
     public static void main(String[] args) {
