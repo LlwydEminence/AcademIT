@@ -36,27 +36,11 @@ public class CSV {
                         inQuotes = false;
                     }
                 } else if (i == chars.length - 1) {
-                    if (chars[i] == '<') {
-                        currentString.append("&lt");
-                    } else if (chars[i] == '>') {
-                        currentString.append("&gt");
-                    } else if (chars[i] == '&') {
-                        currentString.append("&amp");
-                    } else {
-                        currentString.append(chars[i]);
-                    }
+                    appendChar(currentString, chars[i]);
                     currentString.append("<br>");
                     isLineSeparator = true;
                 } else {
-                    if (chars[i] == '<') {
-                        currentString.append("&lt");
-                    } else if (chars[i] == '>') {
-                        currentString.append("&gt");
-                    } else if (chars[i] == '&') {
-                        currentString.append("&amp");
-                    } else {
-                        currentString.append(chars[i]);
-                    }
+                    appendChar(currentString, chars[i]);
                 }
             } else {
                 if (chars[i] == QUOTE && i == chars.length - 1) {
@@ -68,26 +52,10 @@ public class CSV {
                 } else if (chars[i] == COMMA) {
                     currentString.append("</td><td>");
                 } else if (i == chars.length - 1) {
-                    if (chars[i] == '<') {
-                        currentString.append("&lt");
-                    } else if (chars[i] == '>') {
-                        currentString.append("&gt");
-                    } else if (chars[i] == '&') {
-                        currentString.append("&amp");
-                    } else {
-                        currentString.append(chars[i]);
-                    }
+                    appendChar(currentString, chars[i]);
                     currentString.append("</td>");
                 } else {
-                    if (chars[i] == '<') {
-                        currentString.append("&lt");
-                    } else if (chars[i] == '>') {
-                        currentString.append("&gt");
-                    } else if (chars[i] == '&') {
-                        currentString.append("&amp");
-                    } else {
-                        currentString.append(chars[i]);
-                    }
+                   appendChar(currentString, chars[i]);
                 }
             }
         }
@@ -117,6 +85,18 @@ public class CSV {
             }
 
             printWriter.print("</table></body></html>");
+        }
+    }
+
+    private static void appendChar(StringBuilder stringBuilder, char ch) {
+        if (ch == '<') {
+            stringBuilder.append("&lt;");
+        } else if (ch == '>') {
+            stringBuilder.append("&gt;");
+        } else if (ch == '&') {
+            stringBuilder.append("&amp;");
+        } else {
+            stringBuilder.append(ch);
         }
     }
 }
