@@ -1,45 +1,40 @@
 package ru.academits.streltsov.cft;
 
 public class ParsingResults {
-    private static String inputFileName;
-    private static String outputFileName;
-    private static String dataType;
-    private static boolean isAscending;
-
-
-    static void setInputFileName(String string) {
-        inputFileName = string;
+    public enum mode {
+        String, Integer
     }
 
-    static void setOutputFileName(String string) {
-        outputFileName = string;
-    }
+    private String inputFileName;
+    private String outputFileName;
+    private mode dataType;
+    private boolean isAscending;
 
-    static void setDataType(String string) {
-        if (string.equals("-i")) {
-            dataType = "Integer";
+    ParsingResults(String[] args) {
+        inputFileName = args[0];
+        outputFileName = args[1];
+        if (args[2].equals("-s")) {
+            dataType = mode.String;
         } else {
-            dataType = "String";
+            dataType = mode.Integer;
         }
+
+        isAscending = args[3].equals("-a");
     }
 
-    static void setSortDirection(String string) {
-        isAscending = string.equals("-a");
-    }
-
-    static String getInputFileName() {
+    String getInputFileName() {
         return inputFileName;
     }
 
-    static String getOutputFileName() {
+    String getOutputFileName() {
         return outputFileName;
     }
 
-    public static String getDataType() {
+    public  mode getDataType() {
         return dataType;
     }
 
-    public static boolean isAscendingSort() {
+    public boolean isAscendingSort() {
         return isAscending;
     }
 }

@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class FileReader {
-    public static ArrayList<String> readStringInList() throws FileNotFoundException {
+    public static ArrayList<String> readStringInList(ParsingResults parsingResults) throws FileNotFoundException {
         ArrayList<String> list = new ArrayList<>();
 
-        try (Scanner scanner = new Scanner(new FileInputStream(ParsingResults.getInputFileName()))) {
+        try (Scanner scanner = new Scanner(new FileInputStream(parsingResults.getInputFileName()))) {
             while (scanner.hasNext()) {
                 list.add(scanner.nextLine());
             }
@@ -18,10 +18,10 @@ public class FileReader {
         return list;
     }
 
-    public static ArrayList<Integer> readIntegerInList() throws FileNotFoundException {
+    public static ArrayList<Integer> readIntegerInList(ParsingResults parsingResults) throws FileNotFoundException {
         ArrayList<Integer> list = new ArrayList<>();
 
-        try (Scanner scanner = new Scanner(new FileInputStream(ParsingResults.getInputFileName()))) {
+        try (Scanner scanner = new Scanner(new FileInputStream(parsingResults.getInputFileName()))) {
             while (scanner.hasNext()) {
                 list.add(scanner.nextInt());
             }

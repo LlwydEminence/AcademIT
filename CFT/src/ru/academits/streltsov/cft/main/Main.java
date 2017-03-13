@@ -9,23 +9,23 @@ import java.util.ArrayList;
 public class Main {
     public static void main(String[] args) {
         try {
-            ArgumentsParser.parse(args);
-            if (ParsingResults.getDataType().equals("String")) {
-                ArrayList<String> list = FileReader.readStringInList();
-                if (ParsingResults.isAscendingSort()) {
+            ParsingResults parsingResults = ArgumentsParser.parse(args);
+            if (parsingResults.getDataType() == ParsingResults.mode.String) {
+                ArrayList<String> list = FileReader.readStringInList(parsingResults);
+                if (parsingResults.isAscendingSort()) {
                     InsertionSort.sort(list, new StringComparator());
                 } else {
                     InsertionSort.sort(list, new StringComparator().reversed());
                 }
-                FileWriter.writeList(list);
+                FileWriter.writeList(list, parsingResults);
             } else {
-                ArrayList<Integer> list = FileReader.readIntegerInList();
-                if (ParsingResults.isAscendingSort()) {
+                ArrayList<Integer> list = FileReader.readIntegerInList(parsingResults);
+                if (parsingResults.isAscendingSort()) {
                     InsertionSort.sort(list, new IntegerComparator());
                 } else {
                     InsertionSort.sort(list, new IntegerComparator().reversed());
                 }
-                FileWriter.writeList(list);
+                FileWriter.writeList(list, parsingResults);
             }
         } catch (IllegalArgumentException | FileNotFoundException e) {
             System.out.print(e.getMessage());

@@ -9,20 +9,17 @@ public class InsertionSort {
         int left = 0;
         int right = index - 1;
         T temp = list.get(index);
-        while (left <= right){
-            int middle = (left + right) / 2;
-            if (comparator.compare(temp, list.get(middle)) == 0 || (comparator.compare(temp, list.get(middle)) < 0 && (middle == 0 || comparator.compare(temp, list.get(middle - 1)) > 0))) {
-                requiredIndex = middle;
+
+        for (int i = left; i <= right; ++i) {
+            if (comparator.compare(temp, list.get(i)) <= 0) {
+                requiredIndex = i;
+                for (int j = index; j > requiredIndex; --j) {
+                    list.set(j, list.get(j - 1));
+                }
                 break;
-            } else if (comparator.compare(temp, list.get(middle)) < 0) {
-                right = middle - 1;
-            } else {
-                left = middle + 1;
             }
         }
-        for (int i = index; i > requiredIndex; --i) {
-            list.set(i, list.get(i - 1));
-        }
+
         list.set(requiredIndex, temp);
     }
 
