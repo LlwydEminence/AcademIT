@@ -67,9 +67,12 @@ public class CSV {
         list.add(currentString.toString());
     }
 
-    public static void createHTMLFromCSVFile(String inputFileName, String outputFileName) throws FileNotFoundException {
-        try(Scanner scanner = new Scanner(new FileInputStream(inputFileName));
-            PrintWriter printWriter = new PrintWriter(outputFileName)) {
+    public static void createHTMLFromCSVFile(String[] args) throws FileNotFoundException {
+        if (args.length < 2) {
+            throw new IllegalArgumentException("В программе должно быть два аргумента.");
+        }
+        try(Scanner scanner = new Scanner(new FileInputStream(args[0]));
+            PrintWriter printWriter = new PrintWriter(args[1])) {
             printWriter.print("<html><head><title>Файл CSV в формате HTML</title><meta charset=\"utf-8\"></head><body><table border=\"1\">");
 
             ArrayList<String> list = new ArrayList<>();
@@ -85,6 +88,9 @@ public class CSV {
             }
 
             printWriter.print("</table></body></html>");
+        } catch (FileNotFoundException e) {
+            throw new FileNotFoundException("Аргументы должны быть следующими:" + System.lineSeparator() + "1: Существующий входной файл" +
+            System.lineSeparator() + "2: Выходной HTML файл.");
         }
     }
 
