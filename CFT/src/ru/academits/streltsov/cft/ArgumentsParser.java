@@ -18,8 +18,12 @@ public class ArgumentsParser {
         ProgramArguments programArguments = new ProgramArguments();
         programArguments.setInputFileName(args[0]);
         programArguments.setOutputFileName(args[1]);
-        programArguments.setDataType(args[2]);
-        programArguments.setAscending(args[3]);
+        if (args[2].equals("-i")) {
+            programArguments.setDataType(DataType.INTEGER);
+        } else {
+            programArguments.setDataType(DataType.STRING);
+        }
+        programArguments.setAscending(args[3].equals("-a"));
         return programArguments;
     }
 }

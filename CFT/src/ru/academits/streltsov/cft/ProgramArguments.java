@@ -30,15 +30,11 @@ public class ProgramArguments {
         this.outputFileName = outputFileName;
     }
 
-    void setDataType(String dataType) {
-        if (dataType.equals("-i")) {
-            this.dataType = DataType.INTEGER;
-        } else {
-            this.dataType = DataType.STRING;
-        }
+    void setDataType(DataType dataType) {
+        this.dataType = dataType;
     }
 
-    void setAscending (String string) {
-        isAscending = string.equals("-a");
+    void setAscending (boolean isAscending) {
+        this.isAscending = isAscending;
     }
 }
