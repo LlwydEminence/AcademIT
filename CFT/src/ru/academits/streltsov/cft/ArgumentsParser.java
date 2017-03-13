@@ -1,7 +1,7 @@
 package ru.academits.streltsov.cft;
 
 public class ArgumentsParser {
-    public static ParsingResults parse(String[] args) {
+    public static ProgramArguments parse(String[] args) {
 
         if (args.length < 4) {
             throw new IllegalArgumentException("В программе должно быть четыре аргумента.");
@@ -15,6 +15,11 @@ public class ArgumentsParser {
                     "4: -a или -d - по возрастанию или по убыванию соответственно." + System.lineSeparator());
         }
 
-        return new ParsingResults(args);
+        ProgramArguments programArguments = new ProgramArguments();
+        programArguments.setInputFileName(args[0]);
+        programArguments.setOutputFileName(args[1]);
+        programArguments.setDataType(args[2]);
+        programArguments.setAscending(args[3]);
+        return programArguments;
     }
 }

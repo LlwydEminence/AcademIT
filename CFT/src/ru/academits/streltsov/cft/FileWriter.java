@@ -5,8 +5,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class FileWriter {
-    public static <T> void writeList(ArrayList<T> list, ParsingResults parsingResults) {
-        try (PrintWriter printWriter = new PrintWriter(parsingResults.getOutputFileName())) {
+    public static <T> void writeList(ArrayList<T> list, ProgramArguments programArguments) {
+        try (PrintWriter printWriter = new PrintWriter(programArguments.getOutputFileName())) {
             for (T e : list) {
                 printWriter.println(e);
             }
