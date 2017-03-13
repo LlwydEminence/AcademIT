@@ -68,7 +68,7 @@ public class CSV {
     }
 
     public static void createHTMLFromCSVFile(String[] args) throws FileNotFoundException {
-        if (args.length < 2) {
+        if (args.length != 2) {
             throw new IllegalArgumentException("В программе должно быть два аргумента.");
         }
         try(Scanner scanner = new Scanner(new FileInputStream(args[0]));
