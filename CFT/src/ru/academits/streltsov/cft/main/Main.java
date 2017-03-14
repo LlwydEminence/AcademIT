@@ -27,7 +27,13 @@ public class Main {
                 }
                 FileWriter.writeList(list, programArguments);
             }
-        } catch (IllegalArgumentException | FileNotFoundException e) {
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            System.out.print("Аргументы программы должны быть следующие:" + System.lineSeparator() +
+                    "1: входной файл;" + System.lineSeparator() + "2: выходной файл;" + System.lineSeparator() +
+                    "3: -i или -s - сортировка чисел или строк соответственно;" + System.lineSeparator() +
+                    "4: -a или -d - по возрастанию или по убыванию соответственно.");
+        } catch (FileNotFoundException e) {
             System.out.print(e.getMessage());
         }
 
