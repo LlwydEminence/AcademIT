@@ -1,27 +1,27 @@
 package ru.academits.streltsov.list;
 
-class Node {
-    private int data;
-    private Node next;
+class Node<T> {
+    private T data;
+    private Node<T> next;
 
-    Node(int data) {
+    Node(T data) {
         this.data = data;
         next = null;
     }
 
-    int getData() {
+    T getData() {
         return data;
     }
 
-    Node getNext() {
+    Node<T> getNext() {
         return next;
     }
 
-    void setData(int data) {
+    void setData(T data) {
         this.data = data;
     }
 
-    void setNext(Node next) {
+    void setNext(Node<T> next) {
         this.next = next;
     }
 }

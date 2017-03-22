@@ -4,7 +4,7 @@ import ru.academits.streltsov.list.SinglyLinkedList;
 
 public class Main {
     public static void main(String[] args) {
-        SinglyLinkedList singlyLinkedList = new SinglyLinkedList(1);
+        SinglyLinkedList<Integer> singlyLinkedList = new SinglyLinkedList<>(1);
 
         try {
             for (int i = 1; i < 10; ++i) {
@@ -14,13 +14,9 @@ public class Main {
             System.out.println("Исходный список: " + singlyLinkedList);
             singlyLinkedList.reverse();
             System.out.println("Развернутый список: " + singlyLinkedList);
-
-            SinglyLinkedList singlyLinkedList1 = new SinglyLinkedList(1);
-            singlyLinkedList1.copyOf(singlyLinkedList);
-            System.out.println("Копия первого списка: " + singlyLinkedList1);
-        } catch (IllegalArgumentException e) {
+            System.out.println("Копия первого списка: " + singlyLinkedList.copy());
+        } catch (Exception e) {
             System.out.println(e.getMessage());
-
         }
     }
 }
