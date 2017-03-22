@@ -9,17 +9,16 @@ public class SinglyLinkedList<T> {
         size = 1;
     }
 
+    private SinglyLinkedList() {
+        head = null;
+        size = 0;
+    }
+
     private Node<T> getHead() {
         return head;
     }
 
     private int getSize() {
-        int size = 0;
-
-        for (Node p = head; p != null; p = p.getNext()) {
-            ++size;
-        }
-
         return size;
     }
 
@@ -28,24 +27,25 @@ public class SinglyLinkedList<T> {
     }
 
     public T setData(int index, T data) {
-        T oldData = getData(index);
-        getNode(index).setData(data);
+        Node<T> node = getNode(index);
+        T oldData = node.getData();
+        node.setData(data);
         return oldData;
     }
 
     private Node<T> getNode(int index) {
-        if (index < 0) {
-            throw new IllegalArgumentException("Индекс меньше нуля.");
+        if (index < 0 || index >= size) {
+            throw new IllegalArgumentException("Индекс выходит за пределы списка.");
         }
 
         int i = 0;
-        for (Node<T> p = head; p != null; p = p.getNext(), ++i) {
+        Node<T> p;
+        for (p = head; p != null; p = p.getNext(), ++i) {
             if (i == index) {
-                return p;
+                break;
             }
         }
-
-        throw new IllegalArgumentException("Индекс выходит за пределы списка.");
+        return p;
     }
 
     public T deleteData(int index) throws Exception {
@@ -69,6 +69,11 @@ public class SinglyLinkedList<T> {
     }
 
     public void insertToTop(T data) {
+        if (size == 0) {
+            head = new Node<>(data);
+            ++size;
+            return;
+        }
         Node<T> p = new Node<>(data);
         p.setNext(head.getNext());
         head = p;
@@ -115,32 +120,39 @@ public class SinglyLinkedList<T> {
         return deletedData;
     }
 
-    public void insertAfter(int index, T data) {
-        Node<T> node = getNode(index);
-        Node<T> p = new Node<>(data);
-        p.setNext(node.getNext());
-        node.setNext(p);
-        ++size;
+    public void insertAfter(Node<T> node, T data) {
+        if (size == 0) {
+            throw new IllegalArgumentException("Спиок пуст");
+        }
+
+        T nodeData = node.getData();
+        for (Node<T> p = head; p != null; p = p.getNext()) {
+            if (p.getData() == nodeData) {
+                Node<T> q = new Node<>(data);
+                q.setNext(node.getNext());
+                node.setNext(q);
+                ++size;
+                return;
+            }
+        }
+
+        throw new IllegalArgumentException("Узел отсутствует в списке");
     }
 
-    public void deleteAfter(int index) throws Exception {
+    public void deleteAfter(Node<T> node) throws Exception {
         if (size == 0) {
             throw new Exception("Список пуст.");
         }
 
-        if (index >= size) {
-            throw new IllegalArgumentException("Индекс выходит за пределы списка.");
+        T nodeData = node.getData();
+        for (Node<T> p = head; p.getNext() != null; p = p.getNext()) {
+            if (p.getData() == nodeData) {
+                p.setNext(p.getNext().getNext());
+                --size;
+                return;
+            }
         }
-
-        if (index == -1) {
-            deleteHead();
-            return;
-        }
-
-        Node<T> node = getNode(index);
-        node.setNext(node.getNext().getNext());
-        --size;
-
+        throw new IllegalArgumentException("Узел отсутсвует или является последнем узлом в списке.");
     }
 
     @Override
@@ -164,43 +176,25 @@ public class SinglyLinkedList<T> {
             return;
         }
 
-        for (Node<T> p = head, q = p.getNext();;) {
-            if (q.getNext() != null) {
-                Node<T> r = q.getNext();
-                q.setNext(p);
-                p = r.getNext();
-                r.setNext(q);
-
-                if (p == null) {
-                    head.setNext(null);
-                    head = r;
-                    return;
-                } else if (p.getNext() == null) {
-                    p.setNext(r);
-                    head.setNext(null);
-                    head = p;
-                    return;
-                } else {
-                    q = p.getNext();
-                    p.setNext(r);
-                }
-            } else {
-                q.setNext(p);
-                head.setNext(null);
-                head = q;
-                return;
-            }
+        Node<T> p, q;
+        for (p = head, q = head.getNext(); q != null;) {
+            Node<T> r = q.getNext();
+            q.setNext(p);
+            p = q;
+            q = r;
         }
+        head.setNext(null);
+        head = p;
     }
 
     public SinglyLinkedList<T> copy() throws Exception {
         if (size == 0) {
-            throw new Exception("Список пуст.");
+            return new SinglyLinkedList<>();
         }
 
         SinglyLinkedList<T> singlyLinkedList = new SinglyLinkedList<>(getHead().getData());
-        for (int i = 1; i < size; ++i) {
-            singlyLinkedList.insert(i, getData(i));
+        for (Node<T> p = head.getNext(), q = singlyLinkedList.head; p != null; p = p.getNext(), q = q.getNext()) {
+            q.setNext(new Node<>(p.getData()));
         }
         return singlyLinkedList;
     }
