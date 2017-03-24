@@ -81,18 +81,12 @@ public class SinglyLinkedList<T> {
     }
 
     public void insert(int index, T data) {
-        if (size == 0) {
-            if (index == 0) {
-                insertToTop(data);
-                return;
-            } else {
-                throw new IllegalArgumentException("Индекс выходит за пределы списка.");
-            }
+        if (index < 0 || index > size) {
+            throw new IllegalArgumentException("Индекс выходит за пределы списка");
         }
 
         if (index == 0) {
             insertToTop(data);
-            return;
         }
 
         Node<T> node = getNode(index - 1);
@@ -148,6 +142,10 @@ public class SinglyLinkedList<T> {
     public void deleteAfter(Node<T> node) throws Exception {
         if (size == 0) {
             throw new Exception("Список пуст.");
+        }
+
+        if (node.getNext() == null) {
+            throw new IllegalArgumentException("Переданный узел - последний элемент в списке.");
         }
 
         node.setNext(node.getNext().getNext());
