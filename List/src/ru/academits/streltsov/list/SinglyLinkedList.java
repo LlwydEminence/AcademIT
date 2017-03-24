@@ -9,7 +9,7 @@ public class SinglyLinkedList<T> {
         size = 1;
     }
 
-    private SinglyLinkedList() {
+    public SinglyLinkedList() {
         head = null;
         size = 0;
     }
@@ -75,12 +75,26 @@ public class SinglyLinkedList<T> {
             return;
         }
         Node<T> p = new Node<>(data);
-        p.setNext(head.getNext());
+        p.setNext(head);
         head = p;
         ++size;
     }
 
     public void insert(int index, T data) {
+        if (size == 0) {
+            if (index == 0) {
+                insertToTop(data);
+                return;
+            } else {
+                throw new IllegalArgumentException("Индекс выходит за пределы списка.");
+            }
+        }
+
+        if (index == 0) {
+            insertToTop(data);
+            return;
+        }
+
         Node<T> node = getNode(index - 1);
         Node<T> p = new Node<>(data);
         p.setNext(node.getNext());
@@ -125,18 +139,10 @@ public class SinglyLinkedList<T> {
             throw new IllegalArgumentException("Спиок пуст");
         }
 
-        T nodeData = node.getData();
-        for (Node<T> p = head; p != null; p = p.getNext()) {
-            if (p.getData() == nodeData) {
-                Node<T> q = new Node<>(data);
-                q.setNext(node.getNext());
-                node.setNext(q);
-                ++size;
-                return;
-            }
-        }
-
-        throw new IllegalArgumentException("Узел отсутствует в списке");
+        Node<T> p = new Node<>(data);
+        p.setNext(node.getNext());
+        node.setNext(p);
+        ++size;
     }
 
     public void deleteAfter(Node<T> node) throws Exception {
@@ -144,15 +150,8 @@ public class SinglyLinkedList<T> {
             throw new Exception("Список пуст.");
         }
 
-        T nodeData = node.getData();
-        for (Node<T> p = head; p.getNext() != null; p = p.getNext()) {
-            if (p.getData() == nodeData) {
-                p.setNext(p.getNext().getNext());
-                --size;
-                return;
-            }
-        }
-        throw new IllegalArgumentException("Узел отсутсвует или является последнем узлом в списке.");
+        node.setNext(node.getNext().getNext());
+        --size;
     }
 
     @Override
@@ -172,7 +171,7 @@ public class SinglyLinkedList<T> {
     }
 
     public void reverse() {
-        if (head.getNext() == null) {
+        if (size == 0 || head.getNext() == null) {
             return;
         }
 

@@ -26,7 +26,7 @@ public class Main {
         System.out.println("Длина вектора2: " + vector2.calculateLength());
         System.out.println("Сумма вектора 1 и 4: " + Vector.sum(vector1, vector4));
         System.out.println("Разность вектора 1 и 4: " + Vector.difference(vector1, vector4));
-        System.out.println("Скалярное произведение вектора 1 и 4: " + Vector.composition(vector1, vector4));
+        System.out.println("Скалярное произведение вектора 1 и 4: " + Vector.getScalarProduct(vector1, vector4));
 
     }
 }

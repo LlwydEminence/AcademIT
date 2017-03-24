@@ -1,4 +1,4 @@
-package ru.academits.streltsov.cft;
+package ru.cft.streltsov;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;

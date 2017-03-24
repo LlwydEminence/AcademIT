@@ -1,4 +1,4 @@
-package ru.academits.streltsov.vector;
+package ru.academits.streltsov.matrix;
 
 import java.util.Arrays;
 
@@ -34,7 +34,7 @@ public class Vector {
         }
     }
 
-    private int getSize() {
+    int getSize() {
         return coordinates.length;
     }
 
@@ -53,7 +53,7 @@ public class Vector {
         return stringBuilder.toString();
     }
 
-    private void reCreateArray(double[] coordinates, int size) {
+    void reCreateArray(double[] coordinates, int size) {
         this.coordinates = Arrays.copyOf(coordinates, size);
     }
 

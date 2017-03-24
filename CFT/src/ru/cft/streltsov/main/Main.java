@@ -1,6 +1,6 @@
-package ru.academits.streltsov.cft.main;
+package ru.cft.streltsov.main;
 
-import ru.academits.streltsov.cft.*;
+import ru.cft.streltsov.*;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;

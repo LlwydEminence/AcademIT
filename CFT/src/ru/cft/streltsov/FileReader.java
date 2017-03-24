@@ -1,4 +1,4 @@
-package ru.academits.streltsov.cft;
+package ru.cft.streltsov;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

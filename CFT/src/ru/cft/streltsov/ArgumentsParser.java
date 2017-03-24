@@ -1,4 +1,4 @@
-package ru.academits.streltsov.cft;
+package ru.cft.streltsov;
 
 public class ArgumentsParser {
     public static ProgramArguments parse(String[] args) {

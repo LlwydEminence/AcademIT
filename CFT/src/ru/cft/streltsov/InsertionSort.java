@@ -1,4 +1,4 @@
-package ru.academits.streltsov.cft;
+package ru.cft.streltsov;
 
 import java.util.ArrayList;
 import java.util.Comparator;
