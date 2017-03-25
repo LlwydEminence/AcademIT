@@ -18,7 +18,7 @@ public class SinglyLinkedList<T> {
         return head;
     }
 
-    private int getSize() {
+    public int getSize() {
         return size;
     }
 
@@ -87,6 +87,7 @@ public class SinglyLinkedList<T> {
 
         if (index == 0) {
             insertToTop(data);
+            return;
         }
 
         Node<T> node = getNode(index - 1);

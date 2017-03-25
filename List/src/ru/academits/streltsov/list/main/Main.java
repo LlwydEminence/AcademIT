@@ -12,12 +12,15 @@ public class Main {
             }
 
             singlyLinkedList.insertToTop(0);
-            System.out.println("Исходный список: " + singlyLinkedList);
+            singlyLinkedList.insertToTop(-1);
+            System.out.println("Исходный список: " + singlyLinkedList + "size =" + singlyLinkedList.getSize());
 
             singlyLinkedList1.insertToTop(1);
-            System.out.println("Исходный список: " + singlyLinkedList1);
+            singlyLinkedList1.insertToTop(0);
+            System.out.println("Исходный список: " + singlyLinkedList1 + "size =" + singlyLinkedList1.getSize());
             singlyLinkedList.reverse();
-            System.out.println("Развернутый список: " + singlyLinkedList);
+            singlyLinkedList.insertToTop(1);
+            System.out.println("Развернутый список: " + singlyLinkedList + "size =" + singlyLinkedList.getSize());
             System.out.println("Копия первого списка: " + singlyLinkedList.copy());
         } catch (Exception e) {
             System.out.println(e.getMessage());
