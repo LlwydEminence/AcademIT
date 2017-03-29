@@ -76,7 +76,17 @@ public class Matrix {
 
     @Override
     public String toString() {
-        return Arrays.toString(rows);
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("{");
+        for (int i = 0; i < getRowsNumber(); ++i) {
+            stringBuilder.append(rows[i]);
+            if (i == getRowsNumber() - 1) {
+                stringBuilder.append("}");
+            } else {
+                stringBuilder.append(", ");
+            }
+        }
+        return stringBuilder.toString();
     }
 
     private void fillVectors(int rowsNumber, int columnsNumber) {
