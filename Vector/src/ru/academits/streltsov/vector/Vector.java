@@ -34,7 +34,7 @@ public class Vector {
         }
     }
 
-    private int getSize() {
+    public int getSize() {
         return coordinates.length;
     }
 

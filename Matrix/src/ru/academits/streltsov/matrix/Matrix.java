@@ -1,10 +1,10 @@
 package ru.academits.streltsov.matrix;
 
 import java.util.Arrays;
-import java.util.Collections;
+import ru.academits.streltsov.vector.Vector;
 
 public class Matrix {
-    private Vector[] vectors;
+    private Vector[] rows;
 
     public Matrix(int n, int m) {
         fillVectors(n, m);
@@ -25,6 +25,12 @@ public class Matrix {
     public Matrix(double[][] elements) {
         int rowsNumber = elements.length;
         int columnsNumber = elements[0].length;
+
+        for (int i = 1; i < rowsNumber; ++i) {
+            if (elements[i].length != columnsNumber) {
+                throw new IllegalArgumentException("Передан массив координат разногого размера.");
+            }
+        }
         fillVectors(rowsNumber, columnsNumber);
 
         for (int i = 0; i < rowsNumber; ++i) {
@@ -37,6 +43,12 @@ public class Matrix {
     public Matrix(Vector[] vectors) {
         int rowsNumber = vectors.length;
         int columnsNumber = vectors[0].getSize();
+
+        for (int i = 1; i < rowsNumber; ++i) {
+            if (vectors[i].getSize() != columnsNumber) {
+                throw new IllegalArgumentException("Передан массив векторов разного размера");
+            }
+        }
         fillVectors(rowsNumber, columnsNumber);
 
         for (int i = 0; i < rowsNumber; ++i) {
@@ -47,44 +59,44 @@ public class Matrix {
     }
 
     private double getElement(int row, int column) {
-        return vectors[row].getCoordinate(column);
+        return rows[row].getCoordinate(column);
     }
 
     private void setElement(int row, int column, double element) {
-        vectors[row].setCoordinate(column, element);
+        rows[row].setCoordinate(column, element);
     }
 
     private int getRowsNumber() {
-        return vectors.length;
+        return rows.length;
     }
 
     private int getColumnsNumber() {
-        return vectors[0].getSize();
+        return rows[0].getSize();
     }
 
     @Override
     public String toString() {
-        return Arrays.toString(vectors);
+        return Arrays.toString(rows);
     }
 
     private void fillVectors(int rowsNumber, int columnsNumber) {
         if (rowsNumber <= 0 || columnsNumber <= 0) {
             throw new IllegalArgumentException("Число строк и столбцов должно быть больше нуля.");
         }
-        vectors = new Vector[rowsNumber];
+        rows = new Vector[rowsNumber];
         for (int i = 0; i < rowsNumber; ++i) {
-            vectors[i] = new Vector(columnsNumber);
+            rows[i] = new Vector(columnsNumber);
         }
     }
 
-    private Vector getVector(int index) {
+    private Vector getRow(int index) {
         if (index < 0 || index >= getRowsNumber()) {
             throw new IllegalArgumentException("Индекс выходит за пределы строк матрицы.");
         }
-        return vectors[index];
+        return rows[index];
     }
 
-    public void setVector(int index, Vector vector) {
+    public void setRow(int index, Vector vector) {
         if (index < 0 || index >= getRowsNumber()) {
             throw new IllegalArgumentException("Индекс выходит за пределы строк матрицы.");
         }
@@ -113,15 +125,16 @@ public class Matrix {
         return new Vector(vectorCoordinates);
     }
 
-    public void  transpose() {
+    public void transpose() {
         int columnsNumber = getColumnsNumber();
+        int rowsNumber = getRowsNumber();
 
         Vector[] columns = new Vector[columnsNumber];
         for (int i = 0; i < columnsNumber; ++i) {
             columns[i] = new Vector(getColumn(i));
         }
 
-        System.arraycopy(columns, 0, vectors, 0, columnsNumber);
+        rows = columns;
     }
 
     public double calculateDeterminant() {
@@ -138,25 +151,6 @@ public class Matrix {
 
         if (rowsNumber == 2) {
             return getElement(0,0) * getElement(1, 1) - getElement(0, 1) * getElement(1,0);
-        }
-
-        if (rowsNumber == 3) {
-            double element00 = getElement(0,0);
-            double element01 = getElement(0,1);
-            double element02 = getElement(0,2);
-            double element10 = getElement(1,0);
-            double element11 = getElement(1,1);
-            double element12 = getElement(1,2);
-            double element20 = getElement(2,0);
-            double element21 = getElement(2,1);
-            double element22 = getElement(2,2);
-
-            Matrix matrix = new Matrix(new double[][]{{element11, element12}, {element21, element22}});
-            Matrix matrix1 = new Matrix(new double[][]{{element10, element12}, {element20, element22}});
-            Matrix matrix2 = new Matrix(new double[][]{{element10, element11}, {element20, element21}});
-
-            return element00 * matrix.calculateDeterminant() - element01 * matrix1.calculateDeterminant() +
-                    element02 * matrix2.calculateDeterminant();
         }
 
         double determinant = 0;
@@ -182,7 +176,7 @@ public class Matrix {
 
     public void multiply(double scalar) {
         for (int i = 0; i < getRowsNumber(); ++i) {
-            vectors[i].multiply(scalar);
+            rows[i].multiply(scalar);
         }
     }
 
@@ -194,7 +188,7 @@ public class Matrix {
         int rowsNumber = getRowsNumber();
         Vector newVector = new Vector(rowsNumber);
         for (int i = 0; i < rowsNumber; ++i) {
-            newVector.setCoordinate(i, Vector.getScalarProduct(vectors[i], vector));
+            newVector.setCoordinate(i, Vector.getScalarProduct(rows[i], vector));
         }
 
         return newVector;
@@ -208,7 +202,7 @@ public class Matrix {
         }
 
         for (int i = 0; i < rowsNumber; ++i) {
-            vectors[i].add(matrix.getVector(i));
+            rows[i].add(matrix.getRow(i));
         }
     }
 
@@ -220,7 +214,7 @@ public class Matrix {
         }
 
         for (int i = 0; i < rowsNumber; ++i) {
-            vectors[i].deduct(matrix.getVector(i));
+            rows[i].deduct(matrix.getRow(i));
         }
     }
 
