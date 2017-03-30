@@ -241,14 +241,26 @@ public class Matrix {
     }
 
     public static Matrix getProduct(Matrix matrix1, Matrix matrix2) {
-        int rowsNumber = matrix1.getRowsNumber();
-        int columnsNumber = matrix2.getColumnsNumber();
+        int rowsNumber1 = matrix1.getRowsNumber();
+        int columnsNumber1 = matrix1.getColumnsNumber();
+        int columnsNumber2 = matrix2.getColumnsNumber();
 
-        Matrix matrix = new Matrix(rowsNumber, columnsNumber);
-        for (int i = 0; i < rowsNumber; ++i) {
-            for (int j = 0; j < columnsNumber; ++j) {
-                matrix.setElement(i, j, matrix1.multiply(matrix2.getColumn(j)).getCoordinate(i));
+        if (rowsNumber1 != columnsNumber2) {
+            throw new IllegalArgumentException("Число строк в первой матрице, должно совападать с число столбцов во второй.");
+        }
+
+        Matrix matrix = new Matrix(rowsNumber1, columnsNumber2);
+        for (int i = 0, k = 0; i < rowsNumber1; ++k) {
+            if (k == columnsNumber2) {
+                k = -1;
+                ++i;
+                continue;
             }
+            int element = 0;
+            for (int j = 0; j < columnsNumber1; ++j) {
+                element += matrix1.getElement(i, j) * matrix2.getElement(j, k);
+            }
+            matrix.setElement(i, k, element);
         }
 
         return matrix;
