@@ -103,7 +103,7 @@ public class Matrix {
         if (index < 0 || index >= getRowsNumber()) {
             throw new IllegalArgumentException("Индекс выходит за пределы строк матрицы.");
         }
-        return rows[index];
+        return new Vector(rows[index]);
     }
 
     public void setRow(int index, Vector vector) {
@@ -137,7 +137,6 @@ public class Matrix {
 
     public void transpose() {
         int columnsNumber = getColumnsNumber();
-        int rowsNumber = getRowsNumber();
 
         Vector[] columns = new Vector[columnsNumber];
         for (int i = 0; i < columnsNumber; ++i) {
@@ -246,21 +245,18 @@ public class Matrix {
         int columnsNumber2 = matrix2.getColumnsNumber();
 
         if (rowsNumber1 != columnsNumber2) {
-            throw new IllegalArgumentException("Число строк в первой матрице, должно совападать с число столбцов во второй.");
+            throw new IllegalArgumentException("Число строк в первой матрице, должно совападать с числом столбцов во второй.");
         }
 
         Matrix matrix = new Matrix(rowsNumber1, columnsNumber2);
-        for (int i = 0, k = 0; i < rowsNumber1; ++k) {
-            if (k == columnsNumber2) {
-                k = -1;
-                ++i;
-                continue;
+        for (int i = 0; i < rowsNumber1; ++i) {
+            for (int j = 0; j < columnsNumber2; ++j) {
+                int element = 0;
+                for (int k = 0; k < columnsNumber1; ++k) {
+                    element += matrix1.getElement(i, k) * matrix2.getElement(k, j);
+                }
+                matrix.setElement(i, j, element);
             }
-            int element = 0;
-            for (int j = 0; j < columnsNumber1; ++j) {
-                element += matrix1.getElement(i, j) * matrix2.getElement(j, k);
-            }
-            matrix.setElement(i, k, element);
         }
 
         return matrix;
