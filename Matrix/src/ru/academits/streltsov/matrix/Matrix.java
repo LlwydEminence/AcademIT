@@ -241,17 +241,18 @@ public class Matrix {
 
     public static Matrix getProduct(Matrix matrix1, Matrix matrix2) {
         int rowsNumber1 = matrix1.getRowsNumber();
+        int rowsNumber2 = matrix2.getRowsNumber();
         int columnsNumber1 = matrix1.getColumnsNumber();
         int columnsNumber2 = matrix2.getColumnsNumber();
 
-        if (rowsNumber1 != columnsNumber2) {
-            throw new IllegalArgumentException("Число строк в первой матрице, должно совападать с числом столбцов во второй.");
+        if (rowsNumber1 != rowsNumber2) {
+            throw new IllegalArgumentException("Число столбцов в первой матрице должно совпадать с числом строк во второй.");
         }
 
         Matrix matrix = new Matrix(rowsNumber1, columnsNumber2);
         for (int i = 0; i < rowsNumber1; ++i) {
             for (int j = 0; j < columnsNumber2; ++j) {
-                int element = 0;
+                double element = 0;
                 for (int k = 0; k < columnsNumber1; ++k) {
                     element += matrix1.getElement(i, k) * matrix2.getElement(k, j);
                 }
