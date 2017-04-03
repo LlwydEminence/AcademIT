@@ -245,7 +245,7 @@ public class Matrix {
         int columnsNumber1 = matrix1.getColumnsNumber();
         int columnsNumber2 = matrix2.getColumnsNumber();
 
-        if (rowsNumber1 != rowsNumber2) {
+        if (columnsNumber1 != rowsNumber2) {
             throw new IllegalArgumentException("Число столбцов в первой матрице должно совпадать с числом строк во второй.");
         }
 
