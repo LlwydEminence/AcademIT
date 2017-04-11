@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/CSV/CSV.iml" filepath="$PROJECT_DIR$/CSV/CSV.iml" />
       <module fileurl="file://$PROJECT_DIR$/CashMachine/CashMachine.iml" filepath="$PROJECT_DIR$/CashMachine/CashMachine.iml" />
       <module fileurl="file://$PROJECT_DIR$/CFT/Cft.iml" filepath="$PROJECT_DIR$/CFT/Cft.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LinkedList/LinkedList.iml" filepath="$PROJECT_DIR$/LinkedList/LinkedList.iml" />
       <module fileurl="file://$PROJECT_DIR$/List/List.iml" filepath="$PROJECT_DIR$/List/List.iml" />
       <module fileurl="file://$PROJECT_DIR$/Matrix/Matrix.iml" filepath="$PROJECT_DIR$/Matrix/Matrix.iml" />
       <module fileurl="file://$PROJECT_DIR$/Range/Range.iml" filepath="$PROJECT_DIR$/Range/Range.iml" />

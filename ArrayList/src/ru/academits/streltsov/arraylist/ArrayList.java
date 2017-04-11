@@ -95,12 +95,30 @@ public class ArrayList<T> implements List<T> {
     }
 
     @Override
-    public boolean add(Object o) {
+    public <T1> T1[] toArray(T1[] a) {
+        Objects.requireNonNull(a);
+
+        int aLength = a.length;
+        if (aLength >= length) {
+            //noinspection SuspiciousSystemArraycopy
+            System.arraycopy(items, 0, a, 0, length);
+        } else {
+            //noinspection unchecked
+            a = (T1[]) new Object[length];
+            //noinspection SuspiciousSystemArraycopy
+            System.arraycopy(items, 0, a, 0, length);
+        }
+        //noinspection unchecked
+        return a;
+    }
+
+    @Override
+    public boolean add(T t) {
         if (length >= items.length) {
             increaseCapacity();
         }
         //noinspection unchecked
-        items[length] = (T) o;
+        items[length] = t;
         ++length;
         ++modCount;
         return true;
@@ -126,7 +144,20 @@ public class ArrayList<T> implements List<T> {
     }
 
     @Override
-    public boolean addAll(Collection c) {
+    public boolean containsAll(Collection<?> c) {
+        Objects.requireNonNull(c);
+
+        for (Object aC : c) {
+            if (!contains(aC)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends T> c) {
         Objects.requireNonNull(c);
 
         Object[] collectionArray = c.toArray();
@@ -141,7 +172,7 @@ public class ArrayList<T> implements List<T> {
     }
 
     @Override
-    public boolean addAll(int index, Collection c) {
+    public boolean addAll(int index, Collection<? extends T> c) {
         if (index < 0 || index > length) {
             throw new IndexOutOfBoundsException();
         }
@@ -164,6 +195,34 @@ public class ArrayList<T> implements List<T> {
     }
 
     @Override
+    public boolean removeAll(Collection<?> c) {
+        Objects.requireNonNull(c);
+        int expectedModCount = modCount;
+        for (int i = 0; i < length; ++i) {
+            if (c.contains(items[i])) {
+                remove(i);
+                --i;
+            }
+        }
+
+        return expectedModCount != modCount;
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        Objects.requireNonNull(c);
+        int expectedModCount = modCount;
+        for (int i = 0; i < length; ++i) {
+            if (!c.contains(items[i])) {
+                remove(i);
+                --i;
+            }
+        }
+
+        return expectedModCount != modCount;
+    }
+
+    @Override
     public void clear() {
         for (int i = 0; i < length; ++i) {
             items[i] = null;
@@ -179,16 +238,16 @@ public class ArrayList<T> implements List<T> {
     }
 
     @Override
-    public T set(int index, Object element) {
+    public T set(int index, T element) {
         checkIndexInBounds(index);
         T old = items[index];
         //noinspection unchecked
-        items[index] = (T) element;
+        items[index] = element;
         return old;
     }
 
     @Override
-    public void add(int index, Object element) {
+    public void add(int index, T element) {
         if (index < 0 || index > length) {
             throw new IndexOutOfBoundsException();
         }
@@ -201,7 +260,7 @@ public class ArrayList<T> implements List<T> {
         }
         System.arraycopy(items, index, items, index + 1, length - index);
         //noinspection unchecked
-        items[index] = (T) element;
+        items[index] = element;
         ++modCount;
     }
 
@@ -305,63 +364,6 @@ public class ArrayList<T> implements List<T> {
     @Override
     public List<T> subList(int fromIndex, int toIndex) {
         throw new UnsupportedOperationException("Метод subList не определен.");
-    }
-
-    @Override
-    public boolean retainAll(Collection c) {
-        Objects.requireNonNull(c);
-        int expectedModCount = modCount;
-        for (int i = 0; i < length; ++i) {
-            if (!c.contains(items[i])) {
-                remove(i);
-                --i;
-            }
-        }
-
-        return expectedModCount != modCount;
-    }
-
-    @Override
-    public boolean removeAll(Collection c) {
-        Objects.requireNonNull(c);
-        int expectedModCount = modCount;
-        for (int i = 0; i < length; ++i) {
-            if (c.contains(items[i])) {
-                remove(i);
-                --i;
-            }
-        }
-
-        return expectedModCount != modCount;
-    }
-
-    @Override
-    public boolean containsAll(Collection c) {
-        Objects.requireNonNull(c);
-
-        for (Object aC : c) {
-            if (!contains(aC)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public T[] toArray(Object[] a) {
-        Objects.requireNonNull(a);
-
-        int aLength = a.length;
-        if (aLength >= length) {
-            System.arraycopy(items, 0, a, 0, length);
-        } else {
-            a = new Object[length];
-            System.arraycopy(items, 0, a, 0, length);
-        }
-        //noinspection unchecked
-        return (T[])a;
     }
 
     private void ensureCapacity(int capacity) {
