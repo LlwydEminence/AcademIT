@@ -133,8 +133,8 @@ public class ArrayList<T> implements List<T> {
         int collectionLength = collectionArray.length;
 
         ensureCapacity(length + collectionLength);
-        //noinspection unchecked
-        System.arraycopy((T[])collectionArray, 0, items, length, collectionLength);
+        //noinspection SuspiciousSystemArraycopy
+        System.arraycopy(collectionArray, 0, items, length, collectionLength);
         length += collectionLength;
         ++modCount;
         return true;
