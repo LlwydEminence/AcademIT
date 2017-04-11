@@ -3,7 +3,6 @@ package ru.academits.streltsov.arraylist.main;
 import ru.academits.streltsov.arraylist.ArrayList;
 
 import java.util.Arrays;
-import java.util.Iterator;
 
 public class Main {
     public static void main(String[] args) {
@@ -19,7 +18,7 @@ public class Main {
 
         System.out.println(Arrays.toString(arrayList.toArray()));
         System.out.println(Arrays.toString(arrayList1.toArray()));
-        arrayList.addAll(arrayList1);
+        arrayList.addAll(19, arrayList1);
         System.out.println(Arrays.toString(arrayList.toArray()));
         //arrayList.retainAll(arrayList1);
         //arrayList.removeAll(arrayList1);
@@ -27,7 +26,7 @@ public class Main {
             System.out.println("Содержит все элементы.");
         }
         System.out.println(Arrays.toString(arrayList.toArray()));
-        Integer[] a = new Integer[50];
+        Integer[] a = new Integer[30];
         System.out.println(Arrays.toString(arrayList.toArray(a)));
     }
 }
