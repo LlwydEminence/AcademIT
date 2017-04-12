@@ -164,6 +164,10 @@ public class ArrayList<T> implements List<T> {
         Object[] collectionArray = c.toArray();
         int collectionLength = collectionArray.length;
 
+        if (collectionLength == 0) {
+            return false;
+        }
+
         ensureCapacity(length + collectionLength);
         //noinspection SuspiciousSystemArraycopy
         System.arraycopy(collectionArray, 0, items, length, collectionLength);
@@ -179,12 +183,17 @@ public class ArrayList<T> implements List<T> {
         }
         Objects.requireNonNull(c);
 
+        Object[] a = c.toArray();
+        int collectionLength = a.length;
+
+        if (collectionLength == 0) {
+            return false;
+        }
+
         if (index == length) {
             return addAll(c);
         }
 
-        Object[] a = c.toArray();
-        int collectionLength = a.length;
         ensureCapacity(length + collectionLength);
         int addedPartLastIndex = index + collectionLength - 1;
         System.arraycopy(items, index, items, addedPartLastIndex + 1, length - index);

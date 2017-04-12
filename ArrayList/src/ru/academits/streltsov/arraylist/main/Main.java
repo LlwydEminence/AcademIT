@@ -12,9 +12,9 @@ public class Main {
         }
 
         ArrayList<Integer> arrayList1 = new ArrayList<>(3);
-        for (int i = 0; i < 3; ++i) {
+        /*for (int i = 0; i < 3; ++i) {
             arrayList1.add(2);
-        }
+        }*/
 
         System.out.println(Arrays.toString(arrayList.toArray()));
         System.out.println(Arrays.toString(arrayList1.toArray()));
