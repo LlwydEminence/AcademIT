@@ -67,7 +67,8 @@ public class ArrayList<T> implements List<T> {
             }
             T[] items = ArrayList.this.items;
             ++currentPosition;
-            return items[previousPosition = i];
+            previousPosition = i;
+            return items[previousPosition];
         }
 
         @Override
@@ -184,13 +185,12 @@ public class ArrayList<T> implements List<T> {
 
         Object[] a = c.toArray();
         int collectionLength = a.length;
-        int rewritablePart = length - index;
-
-        ensureCapacity(collectionLength + index);
+        ensureCapacity(length + collectionLength);
+        int addedPartLastIndex = index + collectionLength - 1;
+        System.arraycopy(items, index, items, addedPartLastIndex + 1, length - index);
         //noinspection SuspiciousSystemArraycopy
         System.arraycopy(a, 0, items, index, collectionLength);
-        length += collectionLength - rewritablePart;
-        ++modCount;
+        length += collectionLength;
         return true;
     }
 
@@ -377,5 +377,10 @@ public class ArrayList<T> implements List<T> {
             items = Arrays.copyOf(items, length);
             ++modCount;
         }
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.toString(items);
     }
 }
