@@ -11,22 +11,15 @@ public class Main {
             arrayList.add(i + 1);
         }
 
-        ArrayList<Integer> arrayList1 = new ArrayList<>(3);
-        /*for (int i = 0; i < 3; ++i) {
+        java.util.ArrayList<Integer> arrayList1 = new java.util.ArrayList<>();
+        for (int i = 0; i < 3; ++i) {
             arrayList1.add(2);
-        }*/
-
-        System.out.println(Arrays.toString(arrayList.toArray()));
-        System.out.println(Arrays.toString(arrayList1.toArray()));
-        arrayList.addAll(3, arrayList1);
-        System.out.println(Arrays.toString(arrayList.toArray()));
-        //arrayList.retainAll(arrayList1);
-        //arrayList.removeAll(arrayList1);
-        if (arrayList.containsAll(arrayList1)) {
-            System.out.println("Содержит все элементы.");
         }
+        System.out.println(arrayList1);
         System.out.println(arrayList);
+
         Integer[] a = new Integer[0];
+        Integer[] x = arrayList.toArray(a);
         System.out.println(Arrays.toString(arrayList.toArray(a)));
     }
 }

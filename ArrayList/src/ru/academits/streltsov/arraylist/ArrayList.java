@@ -100,16 +100,15 @@ public class ArrayList<T> implements List<T> {
         Objects.requireNonNull(a);
 
         int aLength = a.length;
-        if (aLength >= length) {
-            //noinspection SuspiciousSystemArraycopy
-            System.arraycopy(items, 0, a, 0, length);
-        } else {
+        if (aLength < length) {
             //noinspection unchecked
-            a = (T1[]) new Object[length];
-            //noinspection SuspiciousSystemArraycopy
-            System.arraycopy(items, 0, a, 0, length);
+            return (T1[]) Arrays.copyOf(items, length, a.getClass());
         }
-        //noinspection unchecked
+        //noinspection SuspiciousSystemArraycopy
+        System.arraycopy(items, 0, a, 0, length);
+        if (aLength > length) {
+            a[length] =null;
+        }
         return a;
     }
 
@@ -200,6 +199,7 @@ public class ArrayList<T> implements List<T> {
         //noinspection SuspiciousSystemArraycopy
         System.arraycopy(a, 0, items, index, collectionLength);
         length += collectionLength;
+        ++modCount;
         return true;
     }
 
@@ -390,6 +390,16 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public String toString() {
-        return Arrays.toString(items);
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("[");
+        for (int i = 0; i < length; ++i) {
+            stringBuilder.append(items[i]);
+            if (i != length - 1) {
+                stringBuilder.append(", ");
+            } else {
+                stringBuilder.append("]");
+            }
+        }
+        return stringBuilder.toString();
     }
 }
