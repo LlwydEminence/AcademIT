@@ -396,10 +396,9 @@ public class ArrayList<T> implements List<T> {
             stringBuilder.append(items[i]);
             if (i != length - 1) {
                 stringBuilder.append(", ");
-            } else {
-                stringBuilder.append("]");
             }
         }
+        stringBuilder.append("]");
         return stringBuilder.toString();
     }
 }
