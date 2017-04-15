@@ -393,9 +393,7 @@ public class LinkedList<T> implements List<T>, Deque<T> {
 
         ListIterator<T> listIterator = listIterator(index);
         for (T aC : c) {
-            if (aC != null) {
-                listIterator.add(aC);
-            }
+            listIterator.add(aC);
         }
 
         return expectedModCount != modCount;
@@ -469,13 +467,12 @@ public class LinkedList<T> implements List<T>, Deque<T> {
             return;
         }
 
-        Node<T> q = getNode(index);
-
-        if (q == head) {
+        if (index == 0) {
             addFirst(element);
             return;
         }
 
+        Node<T> q = getNode(index);
         Node<T> p = new Node<>(element);
         p.setPrevious(q.getPrevious());
         q.getPrevious().setNext(p);
@@ -487,16 +484,15 @@ public class LinkedList<T> implements List<T>, Deque<T> {
 
     @Override
     public T remove(int index) {
-        Node<T> p = getNode(index);
-
-        if (p == head) {
+        if (index == 0) {
             return removeFirst();
         }
 
-        if (p == tail) {
+        if (index == size - 1) {
             return removeLast();
         }
 
+        Node<T> p = getNode(index);
         T deletedData = p.getData();
         p.getPrevious().setNext(p.getNext());
         p.getNext().setPrevious(p.getPrevious());
@@ -703,8 +699,9 @@ public class LinkedList<T> implements List<T>, Deque<T> {
         }
 
         final void checkForComodification() {
-            if (modCount != expectedModCount)
+            if (modCount != expectedModCount) {
                 throw new ConcurrentModificationException();
+            }
         }
     }
 
