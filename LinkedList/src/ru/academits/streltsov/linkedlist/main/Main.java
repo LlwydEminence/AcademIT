@@ -18,8 +18,8 @@ public class Main {
         for (int i = 0; i < linkedList.size(); ++i) {
             linkedList1.add(100 - i);
         }
-        linkedList.addAll(5, linkedList1);
-        linkedList.retainAll(linkedList1);
+        linkedList.addAll(4, linkedList1);
+        //linkedList.retainAll(linkedList1);
         System.out.println(linkedList);
     }
 }
