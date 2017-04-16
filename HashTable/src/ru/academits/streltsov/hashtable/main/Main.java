@@ -15,15 +15,15 @@ public class Main {
         hashTable.add(100);
         hashTable.add(200);
         hashTable.add(17);
+        hashTable.add(9);
         Iterator<Integer> iterator = hashTable.iterator();
-        hashTable.remove(200);
 
         ArrayList<Integer> list = new ArrayList<>(10);
         for (int i = 0; i < 10; ++i) {
             list.add(i);
         }
 
-        hashTable.clear();
+        hashTable.retainAll(list);
         System.out.println(hashTable);
     }
 }

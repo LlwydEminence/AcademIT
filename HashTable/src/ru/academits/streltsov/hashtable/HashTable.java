@@ -76,35 +76,36 @@ public class HashTable<T> implements Collection<T> {
     }
 
     private class Itr implements Iterator<T> {
-        private final int ARRAY_SIZE = lists.length;
         private int currentPosition;
         private int previousPosition = -1;
         private int expectedModCount = modCount;
         @SuppressWarnings("unchecked")
-        private Iterator<T>[] iterators = new Iterator[ARRAY_SIZE];
+        private Iterator<T>[] iterators = new Iterator[capacity];
         private int numberOfViewedElements;
         private boolean calledNext;
         private T last;
+        private int startSize = size;
 
         private Itr() {
-            for (int i = 0; i < ARRAY_SIZE; ++i) {
+            for (int i = 0; i < capacity; ++i) {
                 iterators[i] = lists[i].iterator();
             }
         }
         @Override
         public boolean hasNext() {
-            return numberOfViewedElements != size;
+            return numberOfViewedElements != startSize;
         }
 
         @Override
         public T next() {
             checkForComodification();
 
-            for (int i = currentPosition; i < ARRAY_SIZE; ++i) {
+            for (int i = currentPosition; i < capacity; ++i) {
                 if (iterators[i].hasNext()) {
                     ++numberOfViewedElements;
                     calledNext = true;
                     last = iterators[i].next();
+                    previousPosition = -1;
                     return last;
                 }
                 previousPosition = currentPosition;
@@ -121,14 +122,16 @@ public class HashTable<T> implements Collection<T> {
 
             checkForComodification();
             if (previousPosition == -1) {
-                lists[currentPosition].remove(last);
+                iterators[currentPosition].remove();
                 ++expectedModCount;
                 ++modCount;
+                calledNext = false;
                 --size;
             } else {
-                lists[previousPosition].remove(last);
+                iterators[previousPosition].remove();
                 ++expectedModCount;
                 ++modCount;
+                calledNext = false;
                 --size;
             }
         }
@@ -245,7 +248,8 @@ public class HashTable<T> implements Collection<T> {
 
         int expectedSize = size;
         for (Iterator<T> iterator = iterator(); iterator.hasNext();) {
-            if (!c.contains(iterator.next())) {
+            T next = iterator.next();
+            if (!c.contains(next)) {
                 iterator.remove();
             }
         }
