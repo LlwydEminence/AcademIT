@@ -10,12 +10,7 @@ public class HashTable<T> implements Collection<T> {
     private int modCount;
 
     public HashTable() {
-        capacity = DEFAULT_CAPACITY;
-        //noinspection unchecked
-        lists = new LinkedList[capacity];
-        for (int i = 0; i < capacity; ++i) {
-            lists[i] = new LinkedList<>();
-        }
+        this(DEFAULT_CAPACITY);
     }
 
     public HashTable(int capacity) {
@@ -33,9 +28,12 @@ public class HashTable<T> implements Collection<T> {
         stringBuilder.append("[");
         for (int i = 0; i < lists.length; ++i) {
             stringBuilder.append("{");
-            for (Iterator<T> iterator = lists[i].iterator(); iterator.hasNext();) {
-                stringBuilder.append(iterator.next());
-                if (iterator.hasNext()) {
+            int size = lists[i].size();
+            int j = 0;
+            for (T t : lists[i]) {
+                stringBuilder.append(t);
+                ++j;
+                if (j < size) {
                     stringBuilder.append(", ");
                 }
             }
@@ -61,7 +59,7 @@ public class HashTable<T> implements Collection<T> {
 
     @Override
     public boolean contains(Object o) {
-        int index = Math.abs(o.hashCode() % capacity);
+        int index = Math.abs(Objects.hashCode(o) % capacity);
         return contains(o, index);
     }
 
@@ -176,7 +174,7 @@ public class HashTable<T> implements Collection<T> {
 
     @Override
     public boolean add(T t) {
-        int index = Math.abs(t.hashCode() % capacity);
+        int index = Math.abs(Objects.hashCode(t) % capacity);
         return !contains(t, index) && add(t, index);
     }
 
@@ -189,9 +187,10 @@ public class HashTable<T> implements Collection<T> {
             return false;
         }
     }
+
     @Override
     public boolean remove(Object o) {
-        int index = Math.abs(o.hashCode() % capacity);
+        int index = Math.abs(Objects.hashCode(o) % capacity);
 
         return remove(o, index);
     }
