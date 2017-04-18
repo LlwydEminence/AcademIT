@@ -47,6 +47,10 @@ public class HashTable<T> implements Collection<T> {
         return stringBuilder.toString();
     }
 
+    private int getIndex(Object o) {
+        return Math.abs(Objects.hashCode(o) % capacity);
+    }
+
     @Override
     public int size() {
         return size;
@@ -59,8 +63,7 @@ public class HashTable<T> implements Collection<T> {
 
     @Override
     public boolean contains(Object o) {
-        int index = Math.abs(Objects.hashCode(o) % capacity);
-        return contains(o, index);
+        return contains(o, getIndex(o));
     }
 
     private boolean contains(Object o, int index) {
@@ -74,64 +77,56 @@ public class HashTable<T> implements Collection<T> {
     }
 
     private class Itr implements Iterator<T> {
+        private int currentIndex;
         private int currentPosition;
-        private int previousPosition = -1;
+        private Iterator<T> iterator = lists[0].iterator();
         private int expectedModCount = modCount;
-        @SuppressWarnings("unchecked")
-        private Iterator<T>[] iterators = new Iterator[capacity];
-        private int numberOfViewedElements;
-        private boolean calledNext;
-        private T last;
-        private int startSize = size;
+        private T lastElement;
 
-        private Itr() {
-            for (int i = 0; i < capacity; ++i) {
-                iterators[i] = lists[i].iterator();
-            }
-        }
         @Override
         public boolean hasNext() {
-            return numberOfViewedElements != startSize;
+            return currentPosition != size;
         }
 
         @Override
         public T next() {
             checkForComodification();
 
-            for (int i = currentPosition; i < capacity; ++i) {
-                if (iterators[i].hasNext()) {
-                    ++numberOfViewedElements;
-                    calledNext = true;
-                    last = iterators[i].next();
-                    previousPosition = -1;
-                    return last;
-                }
-                previousPosition = currentPosition;
+            if (!iterator.hasNext()) {
+                ++currentIndex;
+            } else {
+                lastElement = iterator.next();
                 ++currentPosition;
+                return lastElement;
             }
+
+            for (int i = currentIndex; i < capacity; ++i) {
+                iterator = lists[i].iterator();
+                if (iterator.hasNext()) {
+                    lastElement = iterator.next();
+                    ++currentPosition;
+                    return lastElement;
+                }
+                ++currentIndex;
+            }
+
             throw new NoSuchElementException();
         }
 
         @Override
         public void remove() {
-            if (!calledNext) {
-                throw new IllegalStateException("Сначала нужно вызвать метод next");
+            checkForComodification();
+
+            if (lastElement == null) {
+                throw new IllegalStateException();
             }
 
-            checkForComodification();
-            if (previousPosition == -1) {
-                iterators[currentPosition].remove();
-                ++expectedModCount;
-                ++modCount;
-                calledNext = false;
-                --size;
-            } else {
-                iterators[previousPosition].remove();
-                ++expectedModCount;
-                ++modCount;
-                calledNext = false;
-                --size;
-            }
+            iterator.remove();
+            ++expectedModCount;
+            ++modCount;
+            lastElement = null;
+            --currentPosition;
+            --size;
         }
 
         private void checkForComodification() {
@@ -174,7 +169,7 @@ public class HashTable<T> implements Collection<T> {
 
     @Override
     public boolean add(T t) {
-        int index = Math.abs(Objects.hashCode(t) % capacity);
+        int index = getIndex(t);
         return !contains(t, index) && add(t, index);
     }
 
@@ -190,9 +185,7 @@ public class HashTable<T> implements Collection<T> {
 
     @Override
     public boolean remove(Object o) {
-        int index = Math.abs(Objects.hashCode(o) % capacity);
-
-        return remove(o, index);
+        return remove(o, getIndex(o));
     }
 
     private boolean remove(Object o, int index) {

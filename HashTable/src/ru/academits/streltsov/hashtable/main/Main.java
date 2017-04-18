@@ -17,13 +17,22 @@ public class Main {
         hashTable.add(17);
         hashTable.add(9);
         Iterator<Integer> iterator = hashTable.iterator();
+        System.out.println(hashTable);
+        iterator.next();
+        iterator.next();
+        iterator.remove();
+        iterator.next();
+        iterator.next();
+        iterator.remove();
+        iterator.next();
+        iterator.remove();
 
-        ArrayList<Integer> list = new ArrayList<>(10);
+        /*ArrayList<Integer> list = new ArrayList<>(10);
         for (int i = 0; i < 10; ++i) {
             list.add(i);
         }
 
-        hashTable.retainAll(list);
+        hashTable.retainAll(list);*/
         System.out.println(hashTable);
     }
 }
