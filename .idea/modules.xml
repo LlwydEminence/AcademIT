@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AcademIT.iml" filepath="$PROJECT_DIR$/AcademIT.iml" />
       <module fileurl="file://$PROJECT_DIR$/ArrayList/ArrayList.iml" filepath="$PROJECT_DIR$/ArrayList/ArrayList.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BinarySearchTree/BinarySearchTree.iml" filepath="$PROJECT_DIR$/BinarySearchTree/BinarySearchTree.iml" />
       <module fileurl="file://$PROJECT_DIR$/CSV/CSV.iml" filepath="$PROJECT_DIR$/CSV/CSV.iml" />
       <module fileurl="file://$PROJECT_DIR$/CashMachine/CashMachine.iml" filepath="$PROJECT_DIR$/CashMachine/CashMachine.iml" />
       <module fileurl="file://$PROJECT_DIR$/CFT/Cft.iml" filepath="$PROJECT_DIR$/CFT/Cft.iml" />
