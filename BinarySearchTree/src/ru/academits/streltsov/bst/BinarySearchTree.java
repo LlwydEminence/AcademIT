@@ -1,5 +1,6 @@
 package ru.academits.streltsov.bst;
 
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -17,8 +18,7 @@ public class BinarySearchTree<T extends Comparable> {
         Node<T> p = root;
 
         while (p != null) {
-            //noinspection unchecked
-            int sgn = data.compareTo(p.getData());
+            int sgn = calculateSgn(data, p.getData());
             if (sgn == 0) {
                 return p;
             } else if (sgn < 0) {
@@ -31,32 +31,45 @@ public class BinarySearchTree<T extends Comparable> {
         return null;
     }
 
+    private int calculateSgn(T data, T nodeData) {
+        if (data != null) {
+            if (nodeData != null) {
+                //noinspection unchecked
+                return data.compareTo(nodeData);
+            } else {
+                return 1;
+            }
+        } else {
+            if (nodeData != null) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
+    }
+
     public void add(T data) {
         Node<T> currentNode = root;
         Node<T> parentNode = null;
 
         while (currentNode != null) {
-            //noinspection unchecked
-            int sgn = data.compareTo(currentNode.getData());
+            int sgn = calculateSgn(data, currentNode.getData());
+            parentNode = currentNode;
 
-            if (sgn == 0) {
-                return;
+            if (sgn <= 0) {
+                currentNode = currentNode.getLeft();
             } else {
-                parentNode = currentNode;
-                if (sgn < 0) {
-                    currentNode = currentNode.getLeft();
-                } else {
-                    currentNode = currentNode.getRight();
-                }
+                currentNode = currentNode.getRight();
             }
+
         }
 
         Node<T> p = new Node<>(data);
         if (parentNode == null) {
             root = p;
         } else {
-            //noinspection unchecked
-            if (data.compareTo(parentNode.getData()) < 0) {
+            int sgn = calculateSgn(data, parentNode.getData());
+            if (sgn <= 0) {
                 parentNode.setLeft(p);
             } else {
                 parentNode.setRight(p);
@@ -64,19 +77,43 @@ public class BinarySearchTree<T extends Comparable> {
         }
     }
 
-    private static void printNode(Node root){
-        System.out.print(root.getData() +" ");
+    private static void printNode(Node root) {
+        System.out.print(root.getData() + " ");
     }
 
-    public void infixTraverse() {
-        infixTraverse(root);
+    public void recursivePrefixTraverse() {
+        recursivePrefixTraverse(root);
     }
 
-    private void infixTraverse(Node<T> root) {
+    public void prefixTraverse() {
+        if (root == null) {
+            return;
+        }
+
+        Node<T> currentNode = root;
+        Deque<Node<T>> stack = new LinkedList<>();
+
+        while (!stack.isEmpty() || currentNode != null) {
+            if (currentNode != null) {
+                printNode(currentNode);
+
+                Node<T> rightChild = currentNode.getRight();
+                if (rightChild != null) {
+                    stack.addLast(rightChild);
+                }
+                currentNode = currentNode.getLeft();
+            } else {
+                currentNode = stack.removeLast();
+            }
+        }
+    }
+
+
+    private void recursivePrefixTraverse(Node<T> root) {
         if (root != null) {
-            infixTraverse(root.getLeft());
             printNode(root);
-            infixTraverse(root.getRight());
+            recursivePrefixTraverse(root.getLeft());
+            recursivePrefixTraverse(root.getRight());
         }
     }
 
@@ -99,55 +136,55 @@ public class BinarySearchTree<T extends Comparable> {
     }
 
     public void remove(T data) {
-        Node<T> currentNote = root;
-        Node<T> parentNote = null;
+        Node<T> currentNode = root;
+        Node<T> parentNode = null;
 
-        while (currentNote != null) {
+        while (currentNode != null) {
             //noinspection unchecked
-            int sgn = data.compareTo(currentNote.getData());
+            int sgn = data.compareTo(currentNode.getData());
 
             if (sgn == 0) {
                 break;
             } else {
-                parentNote = currentNote;
+                parentNode = currentNode;
                 if (sgn < 0) {
-                    currentNote = currentNote.getLeft();
+                    currentNode = currentNode.getLeft();
                 } else {
-                    currentNote = currentNote.getRight();
+                    currentNode = currentNode.getRight();
                 }
             }
         }
 
-        if (currentNote == null) {
+        if (currentNode == null) {
             return;
         }
 
-        if (currentNote.getRight() == null) {
-            if (parentNote == null) {
-                root = currentNote.getLeft();
+        if (currentNode.getRight() == null) {
+            if (parentNode == null) {
+                root = currentNode.getLeft();
             } else {
-                if (currentNote == parentNote.getLeft()) {
-                    parentNote.setLeft(currentNote.getLeft());
+                if (currentNode == parentNode.getLeft()) {
+                    parentNode.setLeft(currentNode.getLeft());
                 } else {
-                    parentNote.setRight(currentNote.getLeft());
+                    parentNode.setRight(currentNode.getLeft());
                 }
             }
         } else {
-            Node<T> rightSubtreeMin = currentNote.getRight();
-            parentNote = null;
+            Node<T> rightSubtreeMin = currentNode.getRight();
+            parentNode = null;
 
             while (rightSubtreeMin.getLeft() != null) {
-                parentNote = rightSubtreeMin;
+                parentNode = rightSubtreeMin;
                 rightSubtreeMin = rightSubtreeMin.getLeft();
             }
 
-            if (parentNote == null) {
-                currentNote.setRight(rightSubtreeMin.getLeft());
+            if (parentNode == null) {
+                currentNode.setRight(rightSubtreeMin.getLeft());
             } else {
-                parentNote.setLeft(rightSubtreeMin.getLeft());
+                parentNode.setLeft(rightSubtreeMin.getLeft());
             }
 
-            currentNote.setData(rightSubtreeMin.getData());
+            currentNode.setData(rightSubtreeMin.getData());
         }
     }
 }
