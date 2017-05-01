@@ -108,7 +108,6 @@ public class BinarySearchTree<T extends Comparable> {
         }
     }
 
-
     private void recursivePrefixTraverse(Node<T> root) {
         if (root != null) {
             printNode(root);
@@ -141,7 +140,7 @@ public class BinarySearchTree<T extends Comparable> {
 
         while (currentNode != null) {
             //noinspection unchecked
-            int sgn = data.compareTo(currentNode.getData());
+            int sgn = calculateSgn(data, currentNode.getData());
 
             if (sgn == 0) {
                 break;

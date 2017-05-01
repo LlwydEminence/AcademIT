@@ -14,7 +14,10 @@ public class Graph {
 
         vertexNumber = adjacencyMatrix.length;
         this.adjacencyMatrix = new int[vertexNumber][vertexNumber];
+        fillAdjacencyMatrix(adjacencyMatrix);
+    }
 
+    private void fillAdjacencyMatrix(int[][] adjacencyMatrix) {
         for (int i = 0; i < vertexNumber; ++i) {
             if (adjacencyMatrix[i][i] != 0) {
                 throw new IllegalArgumentException("Главная диагональ матрицы должна быть заполнена нулями.");
@@ -30,8 +33,8 @@ public class Graph {
                 this.adjacencyMatrix[i][j] = element;
                 this.adjacencyMatrix[j][i] = element;
             }
+        }
     }
-}
 
     @Override
     public String toString() {
@@ -43,45 +46,53 @@ public class Graph {
     }
 
     public void breadthFirstSearch() {
-        ArrayList<Integer> visitedVertices = new ArrayList<>();
-        Queue<Integer> queue = new LinkedList<>();
+        boolean[] mark = new boolean[vertexNumber];
+        breadthFirstSearch(0, mark);
 
         for (int i = 0; i < vertexNumber; ++i) {
-            if (!visitedVertices.contains(i)) {
-                queue.add(i);
-                visitedVertices.add(i);
-                printIndex(queue.remove() + 1);
+            if (!mark[i]) {
+                breadthFirstSearch(i, mark);
             }
+        }
+    }
 
-            for (int j = i + 1; j < vertexNumber; ++j) {
-                if (adjacencyMatrix[i][j] == 1 && !visitedVertices.contains(j)) {
-                    queue.add(j);
-                    visitedVertices.add(j);
+    private void breadthFirstSearch(int index, boolean[] mark) {
+        Queue<Integer> queue = new LinkedList<>();
+
+        mark[index] = true;
+        queue.add(index);
+
+        while (!queue.isEmpty()) {
+            index = queue.remove();
+            printIndex(index);
+
+            for (int i = 0; i < vertexNumber; ++i) {
+                if (adjacencyMatrix[index][i] == 1 && !mark[i]) {
+                    mark[i] = true;
+                    queue.add(i);
                 }
-            }
-
-            while (!queue.isEmpty()) {
-                printIndex(queue.remove() + 1);
-            }
-
-            if (visitedVertices.size() == vertexNumber) {
-                return;
             }
         }
     }
 
     public void recursiveDepthFirstSearch() {
-        int[] mark = new int[vertexNumber];
+        boolean[] mark = new boolean[vertexNumber];
         recursiveDepthFirstSearch(0, mark);
+
+        for (int i = 0; i < mark.length; ++i) {
+            if (!mark[i]) {
+                recursiveDepthFirstSearch(i, mark);
+            }
+        }
     }
 
-    private void recursiveDepthFirstSearch(int index, int[] mark) {
-        if (mark[index] != 0) {
+    private void recursiveDepthFirstSearch(int index, boolean[] mark) {
+        if (mark[index]) {
             return;
         }
 
-        printIndex(index + 1);
-        mark[index] = 1;
+        printIndex(index);
+        mark[index] = true;
 
         for (int i = 0; i < vertexNumber; ++i) {
             if (adjacencyMatrix[index][i] == 1) {
@@ -91,28 +102,35 @@ public class Graph {
     }
 
     public void depthFirstSearch() {
-        int[] mark = new int[vertexNumber];
-        Deque<Integer> stack = new LinkedList<>();
-        int index = 0;
+        boolean[] mark = new boolean[vertexNumber];
+        depthFirstSearch(0, mark);
 
-        mark[index] = 1;
-        printIndex(index + 1);
+        for (int i = 0; i < vertexNumber; ++i) {
+            if (!mark[i]) {
+                depthFirstSearch(i, mark);
+            }
+        }
+    }
+
+    private void depthFirstSearch(int index, boolean[] mark) {
+        Deque<Integer> stack = new LinkedList<>();
+
+        mark[index] = true;
+        printIndex(index);
 
         do {
             for (int i = 0; i < vertexNumber; ++i) {
-                if (adjacencyMatrix[index][i] == 1 && mark[i] == 0) {
+                if (adjacencyMatrix[index][i] == 1 && !mark[i]) {
                     stack.addLast(index);
                     index = i;
                     i = -1;
-                    mark[index] = 1;
-                    printIndex(index + 1);
+                    mark[index] = true;
+                    printIndex(index);
                 }
             }
 
             index = stack.removeLast();
         } while (!stack.isEmpty());
-
-
     }
 
 }

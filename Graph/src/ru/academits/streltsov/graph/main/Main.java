@@ -8,8 +8,8 @@ public class Main {
         Graph graph1 = new Graph(new int[][]{{0, 1, 0, 0, 0, 0, 0}, {1, 0, 1, 1, 1, 1, 0}, {0, 1, 0, 0, 0, 0, 1},
                 {0, 1, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 1, 0}, {0, 1, 0, 0, 1, 0, 1}, {0, 0, 1, 0, 0, 1, 0}});
 
-        graph.recursiveDepthFirstSearch();
+        //graph1.recursiveDepthFirstSearch();
         System.out.println();
-        graph.depthFirstSearch();
+        graph1.depthFirstSearch();
     }
 }
