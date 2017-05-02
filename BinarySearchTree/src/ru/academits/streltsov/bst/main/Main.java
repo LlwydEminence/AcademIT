@@ -14,8 +14,9 @@ public class Main {
         bst.add(2);
         bst.add(1);
         bst.add(3);
+        bst.remove(null);
         bst.recursivePrefixTraverse();
         System.out.println();
-        bst.prefixTraverse();
+        //bst.prefixTraverse();
     }
 }
