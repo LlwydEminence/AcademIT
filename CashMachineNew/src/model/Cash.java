@@ -1,4 +1,4 @@
-package ru.academits.streltsov.cashmachine;
+package model;
 
 class Cash {
     private Denomination denomination;

@@ -6,7 +6,8 @@
       <module fileurl="file://$PROJECT_DIR$/ArrayList/ArrayList.iml" filepath="$PROJECT_DIR$/ArrayList/ArrayList.iml" />
       <module fileurl="file://$PROJECT_DIR$/BinarySearchTree/BinarySearchTree.iml" filepath="$PROJECT_DIR$/BinarySearchTree/BinarySearchTree.iml" />
       <module fileurl="file://$PROJECT_DIR$/CSV/CSV.iml" filepath="$PROJECT_DIR$/CSV/CSV.iml" />
-      <module fileurl="file://$PROJECT_DIR$/CashMachine/CashMachine.iml" filepath="$PROJECT_DIR$/CashMachine/CashMachine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CashMachineNew/CashMachineNew.iml" filepath="$PROJECT_DIR$/CashMachineNew/CashMachineNew.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CashMachineOld/CashMachine.iml" filepath="$PROJECT_DIR$/CashMachineOld/CashMachine.iml" />
       <module fileurl="file://$PROJECT_DIR$/CFT/Cft.iml" filepath="$PROJECT_DIR$/CFT/Cft.iml" />
       <module fileurl="file://$PROJECT_DIR$/Graph/Graph.iml" filepath="$PROJECT_DIR$/Graph/Graph.iml" />
       <module fileurl="file://$PROJECT_DIR$/HashTable/HashTable.iml" filepath="$PROJECT_DIR$/HashTable/HashTable.iml" />
