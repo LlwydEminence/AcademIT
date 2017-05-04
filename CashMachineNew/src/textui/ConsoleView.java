@@ -35,7 +35,7 @@ public class ConsoleView {
                 }
 
                 case DISPLAY_STATUS: {
-                    controller.needDisplayStatus();
+                    controller.needData();
                     break;
                 }
 
@@ -134,8 +134,27 @@ public class ConsoleView {
         System.out.println("Выдано " + amount + " рублей.");
     }
 
-    public void displayStatus(String string) {
-        System.out.println(string);
+    public void displayStatus(int amountOfMoney, int[] notesValues, int[] notesNumbers) {
+        System.out.println("В банкомате доступно " + amountOfMoney + " рублей.");
+        if (amountOfMoney != 0) {
+            System.out.println("В наличии купюры следующих номиналов:");
+            for (int i = 0; i < notesNumbers.length; ++i) {
+                if (notesNumbers[i] != 0) {
+                    System.out.println(notesNumbers[i] + " купюр" + getEnding(notesNumbers[i]) + " по " +
+                            notesValues[i] + " рублей.");
+                }
+            }
+        }
+    }
+
+    private String getEnding(int notesNumber) {
+        if (notesNumber % 10 == 1) {
+            return  "а";
+        } else if (notesNumber % 10 == 2 || notesNumber % 10 == 3 || notesNumber % 10 == 4) {
+            return  "ы";
+        } else {
+            return "";
+        }
     }
 
     public void addController(Controller controller) {

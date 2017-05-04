@@ -30,6 +30,34 @@ public class CashMachine {
         return amountOfMoney > 0;
     }
 
+    public int getAmountOfMoney() {
+        return amountOfMoney;
+    }
+
+    public int[] getNotesValues() {
+        int[] notesValues = new int[DENOMINATION_NUMBER];
+        int i = 0;
+
+        for (Cash cash : notes) {
+            notesValues[i] = cash.getValue();
+            ++i;
+        }
+
+        return notesValues;
+    }
+
+    public int[] getNotesNumbers() {
+        int[] notesNumbers = new int[DENOMINATION_NUMBER];
+        int i = 0;
+
+        for (Cash cash : notes) {
+            notesNumbers[i] = cash.getNumber();
+            ++i;
+        }
+
+        return notesNumbers;
+    }
+
     private Cash checkCash(int requiredDenomination) {
         for (Denomination denomination: DENOMINATIONS) {
             if (requiredDenomination == denomination.getValue()) {
@@ -96,45 +124,5 @@ public class CashMachine {
         notesNumber -= deductibleCashNumber;
         amountOfMoney -= requiredAmount;
         return requiredAmount;
-    }
-
-    public String displayStatus() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("В банкомате доступно ");
-        stringBuilder.append(amountOfMoney);
-        stringBuilder.append(" рублей.");
-
-        if (amountOfMoney == 0) {
-            return stringBuilder.toString();
-        }
-
-        stringBuilder.append(System.lineSeparator());
-        stringBuilder.append("В наличии купюры номиналов: ");
-        stringBuilder.append(System.lineSeparator());
-
-        for (Cash cash : notes) {
-            int cashNumber = cash.getNumber();
-            if (cashNumber != 0) {
-                stringBuilder.append(cashNumber);
-                stringBuilder.append(" купюр");
-                stringBuilder.append(getEnding(cashNumber));
-                stringBuilder.append(" по ");
-                stringBuilder.append(cash.getValue());
-                stringBuilder.append(" рублей");
-                stringBuilder.append(System.lineSeparator());
-            }
-        }
-
-        return stringBuilder.toString();
-    }
-
-    private String getEnding(int cashNumber) {
-        if (cashNumber % 10 == 1) {
-            return  "а";
-        } else if (cashNumber % 10 == 2 || cashNumber % 10 == 3 || cashNumber % 10 == 4) {
-            return  "ы";
-        } else {
-            return "";
-        }
     }
 }

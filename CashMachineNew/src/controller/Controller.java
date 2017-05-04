@@ -22,7 +22,7 @@ public class Controller {
         consoleView.reportForWithdrawCash(cashMachine.withdrawCash(requiredAmount, requiredDenomination));
     }
 
-    public void needDisplayStatus() {
-        consoleView.displayStatus(cashMachine.displayStatus());
+    public void needData() {
+        consoleView.displayStatus(cashMachine.getAmountOfMoney(), cashMachine.getNotesValues(), cashMachine.getNotesNumbers());
     }
 }
