@@ -126,7 +126,7 @@ public class ConsoleView {
         }
     }
 
-    public void reportForMakeCash(int amount) {
+    public void reportForDeposit(int amount) {
         System.out.println("Внесено " + amount + " рублей.");
     }
 

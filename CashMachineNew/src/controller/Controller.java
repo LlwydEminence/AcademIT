@@ -15,7 +15,7 @@ public class Controller {
     }
 
     public void needDeposit(int requiredDenomination, int cashNumber) throws OperationNotSupportedException {
-        consoleView.reportForMakeCash(cashMachine.deposit(requiredDenomination, cashNumber));
+        consoleView.reportForDeposit(cashMachine.deposit(requiredDenomination, cashNumber));
     }
 
     public void needWithdrawCash(int requiredAmount, int requiredDenomination) throws OperationNotSupportedException {
