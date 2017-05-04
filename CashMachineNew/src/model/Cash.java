@@ -1,6 +1,6 @@
 package model;
 
-class Cash {
+public class Cash {
     private Denomination denomination;
     private int number;
 
@@ -9,11 +9,15 @@ class Cash {
         this.number = number;
     }
 
-    int getValue() {
+    public int getValue() {
         return denomination.getValue();
     }
 
-    int getNumber() {
+    Denomination getDenomination() {
+        return denomination;
+    }
+
+    public int getNumber() {
         return number;
     }
 

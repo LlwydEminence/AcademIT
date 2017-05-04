@@ -15,7 +15,7 @@ public class CashMachine {
 
     public CashMachine() {
         notes = new ArrayList<>();
-        for (Denomination d : Denomination.values()) {
+        for (Denomination d : DENOMINATIONS) {
             notes.add(new Cash(d, DEFAULT_NOTE_NUMBER));
             notesNumber += DEFAULT_NOTE_NUMBER;
             amountOfMoney += d.getValue() * DEFAULT_NOTE_NUMBER;
@@ -34,41 +34,29 @@ public class CashMachine {
         return amountOfMoney;
     }
 
-    public int[] getNotesValues() {
-        int[] notesValues = new int[DENOMINATION_NUMBER];
+    public Cash[] getCash() {
+        Cash[] cash = new Cash[DENOMINATION_NUMBER];
         int i = 0;
 
-        for (Cash cash : notes) {
-            notesValues[i] = cash.getValue();
+        for (Cash c : notes) {
+            cash[i] = new Cash(c.getDenomination(), c.getNumber());
             ++i;
         }
 
-        return notesValues;
-    }
-
-    public int[] getNotesNumbers() {
-        int[] notesNumbers = new int[DENOMINATION_NUMBER];
-        int i = 0;
-
-        for (Cash cash : notes) {
-            notesNumbers[i] = cash.getNumber();
-            ++i;
-        }
-
-        return notesNumbers;
+        return cash;
     }
 
     private Cash checkCash(int requiredDenomination) {
-        for (Denomination denomination: DENOMINATIONS) {
-            if (requiredDenomination == denomination.getValue()) {
-                return notes.get(denomination.getIndex());
+        for (Cash cash : notes) {
+            if (requiredDenomination == cash.getValue()) {
+                return cash;
             }
         }
 
         throw new IllegalArgumentException("Купюр с таким номиналом не существует.");
     }
 
-    public int makeCash(int requiredDenomination, int cashNumber) throws OperationNotSupportedException {
+    public int deposit(int requiredDenomination, int cashNumber) throws OperationNotSupportedException {
         if (checkOverflow()) {
             throw new OperationNotSupportedException("Банкомат переполнен. На данный момент внесение наличных невозможно.");
         }
@@ -94,8 +82,8 @@ public class CashMachine {
     public int withdrawCash(int requiredAmount, int requiredDenomination) throws OperationNotSupportedException {
         Cash requiredCash = checkCash(requiredDenomination);
 
-        if (requiredAmount <= 0 || requiredAmount % 10 != 0) {
-            throw new IllegalArgumentException("Сумма должна быть положительной и кратной десяти.");
+        if (requiredAmount <= 0) {
+            throw new IllegalArgumentException("Сумма должна быть положительной.");
         }
 
         if (!checkAvailability()) {

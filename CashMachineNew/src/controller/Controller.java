@@ -14,8 +14,8 @@ public class Controller {
         this.consoleView = consoleView;
     }
 
-    public void needMakeCash(int requiredDenomination, int cashNumber) throws OperationNotSupportedException {
-        consoleView.reportForMakeCash(cashMachine.makeCash(requiredDenomination, cashNumber));
+    public void needDeposit(int requiredDenomination, int cashNumber) throws OperationNotSupportedException {
+        consoleView.reportForMakeCash(cashMachine.deposit(requiredDenomination, cashNumber));
     }
 
     public void needWithdrawCash(int requiredAmount, int requiredDenomination) throws OperationNotSupportedException {
@@ -23,6 +23,6 @@ public class Controller {
     }
 
     public void needData() {
-        consoleView.displayStatus(cashMachine.getAmountOfMoney(), cashMachine.getNotesValues(), cashMachine.getNotesNumbers());
+        consoleView.displayStatus(cashMachine.getAmountOfMoney(), cashMachine.getCash());
     }
 }

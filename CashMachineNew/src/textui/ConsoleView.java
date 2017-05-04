@@ -1,9 +1,9 @@
 package textui;
 
 import controller.Controller;
+import model.Cash;
 
 import javax.naming.OperationNotSupportedException;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class ConsoleView {
@@ -53,7 +53,7 @@ public class ConsoleView {
     private void clarifyRequestForMakeCash() {
         while (true) {
             try {
-                System.out.println("Купюру каким номиналом вы хотите внести?. Для отмены нажмите " + FINISH);
+                System.out.println("Купюру каким номиналом вы хотите внести? Для отмены нажмите " + FINISH);
                 int requiredDenomination = Integer.parseInt(scanner.nextLine());
 
                 if (requiredDenomination == Integer.parseInt(FINISH)) {
@@ -75,7 +75,7 @@ public class ConsoleView {
                     return;
                 }
 
-                controller.needMakeCash(requiredDenomination, cashNumber);
+                controller.needDeposit(requiredDenomination, cashNumber);
                 break;
             } catch (NumberFormatException e) {
                 System.out.println("Должно быть целое число.");
@@ -134,14 +134,15 @@ public class ConsoleView {
         System.out.println("Выдано " + amount + " рублей.");
     }
 
-    public void displayStatus(int amountOfMoney, int[] notesValues, int[] notesNumbers) {
+    public void displayStatus(int amountOfMoney, Cash[] cash) {
         System.out.println("В банкомате доступно " + amountOfMoney + " рублей.");
         if (amountOfMoney != 0) {
             System.out.println("В наличии купюры следующих номиналов:");
-            for (int i = 0; i < notesNumbers.length; ++i) {
-                if (notesNumbers[i] != 0) {
-                    System.out.println(notesNumbers[i] + " купюр" + getEnding(notesNumbers[i]) + " по " +
-                            notesValues[i] + " рублей.");
+            for (Cash c : cash) {
+                int cashNumber = c.getNumber();
+                if (cashNumber != 0) {
+                    System.out.println(cashNumber + " купюр" + getEnding(cashNumber) + " по " +
+                            c.getValue() + " рублей.");
                 }
             }
         }
