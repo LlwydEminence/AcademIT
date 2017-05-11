@@ -1,12 +1,13 @@
 package textui;
 
+import common.View;
 import controller.Controller;
 import model.Cash;
 
 import javax.naming.OperationNotSupportedException;
 import java.util.Scanner;
 
-public class ConsoleView {
+public class ConsoleView implements View {
     private Scanner scanner = new Scanner(System.in);
     private Controller controller;
     private final static String MAKE_CASH = "1";

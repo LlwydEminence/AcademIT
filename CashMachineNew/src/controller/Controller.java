@@ -1,5 +1,6 @@
 package controller;
 
+import common.View;
 import model.CashMachine;
 import textui.ConsoleView;
 
@@ -7,22 +8,22 @@ import javax.naming.OperationNotSupportedException;
 
 public class Controller {
     private final CashMachine cashMachine;
-    private final ConsoleView consoleView;
+    private final View view;
 
-    public Controller(CashMachine cashMachine, ConsoleView consoleView) {
+    public Controller(CashMachine cashMachine, View view) {
         this.cashMachine = cashMachine;
-        this.consoleView = consoleView;
+        this.view = view;
     }
 
     public void needDeposit(int requiredDenomination, int cashNumber) throws OperationNotSupportedException {
-        consoleView.reportForDeposit(cashMachine.deposit(requiredDenomination, cashNumber));
+        view.reportForDeposit(cashMachine.deposit(requiredDenomination, cashNumber));
     }
 
     public void needWithdrawCash(int requiredAmount, int requiredDenomination) throws OperationNotSupportedException {
-        consoleView.reportForWithdrawCash(cashMachine.withdrawCash(requiredAmount, requiredDenomination));
+        view.reportForWithdrawCash(cashMachine.withdrawCash(requiredAmount, requiredDenomination));
     }
 
     public void needData() {
-        consoleView.displayStatus(cashMachine.getAmountOfMoney(), cashMachine.getCash());
+        view.displayStatus(cashMachine.getAmountOfMoney(), cashMachine.getCash());
     }
 }
