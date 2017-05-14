@@ -1,7 +1,6 @@
 package gui;
 
-import controller.Controller;
-
+import model.TemperatureConverter;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,16 +8,12 @@ import java.awt.event.ActionListener;
 
 public class FrameView {
     private final JFrame frame = new JFrame("Конвертер температур");
-    private final JComboBox<String> converter = new JComboBox<>(new String[]{DEFAULT_CONVERTER_NAME, "Цельсий в Фаренгейт",
-            "Кельвин в Цельсий", "Кельвин в Фаренгейт", "Фаренгейт в Цельсий", "Фаренгейт в Кельвин"});
+    private final JComboBox<String> converter = new JComboBox<>(TemperatureConverter.getTemperatureScales());
     private final JTextField result = new JTextField(20);
     private final JButton convertButton = new JButton("Перевести");
     private final JTextField temperature = new JTextField(5);
 
-    private static final String DEFAULT_CONVERTER_NAME = "Цельсий в Кельвин";
-
-    private String converterName = DEFAULT_CONVERTER_NAME;
-    private Controller controller;
+    private String converterName = converter.getItemAt(0);
 
     public void startTemperatureConverter() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -64,37 +59,7 @@ public class FrameView {
             public void actionPerformed(ActionEvent e) {
                 try {
                     double temperatureValue = Double.parseDouble(temperature.getText());
-                    switch (converterName) {
-                        case DEFAULT_CONVERTER_NAME: {
-                            controller.needConvertCelsiusToKelvin(temperatureValue);
-                            break;
-                        }
-
-                        case "Цельсий в Фаренгейт": {
-                            controller.needConvertCelsiusToFahrenheit(temperatureValue);
-                            break;
-                        }
-
-                        case "Кельвин в Цельсий": {
-                            controller.needConvertKelvinToCelsius(temperatureValue);
-                            break;
-                        }
-
-                        case "Кельвин в Фаренгейт": {
-                            controller.needConvertKelvinToFahrenheit(temperatureValue);
-                            break;
-                        }
-
-                        case "Фаренгейт в Цельсий": {
-                            controller.needConvertFahrenheitToCelsius(temperatureValue);
-                            break;
-                        }
-
-                        case "Фаренгейт в Кельвин": {
-                            controller.needConvertFahrenheitToKelvin(temperatureValue);
-                            break;
-                        }
-                    }
+                    printConvertedTemperature(TemperatureConverter.convert(temperatureValue, converterName));
                 } catch (NumberFormatException ex) {
                     result.setText("Температура должна быть числом");
                 }
@@ -108,11 +73,7 @@ public class FrameView {
         });
     }
 
-    public void printConvertedTemperature(double temperature) {
+    private void printConvertedTemperature(double temperature) {
        result.setText(Double.toString(temperature));
-    }
-
-    public void addController(Controller controller) {
-        this.controller = controller;
     }
 }
