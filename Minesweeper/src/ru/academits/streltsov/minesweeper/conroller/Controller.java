@@ -1,9 +1,9 @@
 package ru.academits.streltsov.minesweeper.conroller;
 
 import ru.academits.streltsov.minesweeper.common.View;
-import ru.academits.streltsov.minesweeper.model.GameOverException;
+import ru.academits.streltsov.minesweeper.model.exceptions.GameOverException;
 import ru.academits.streltsov.minesweeper.model.Minesweeper;
-import ru.academits.streltsov.minesweeper.model.VictoryException;
+import ru.academits.streltsov.minesweeper.model.exceptions.VictoryException;
 import ru.academits.streltsov.minesweeper.model.Winner;
 
 import javax.naming.OperationNotSupportedException;
@@ -25,6 +25,10 @@ public class Controller {
 
     public void needInitField(String level) {
         minesweeper.initField(level);
+    }
+
+    public void needInitField(int rowsNumber, int columnsNumber, int minesNumber) {
+        minesweeper.initField(rowsNumber, columnsNumber, minesNumber);
     }
 
     public void needPrintField() {
@@ -51,11 +55,23 @@ public class Controller {
         minesweeper.deleteMark(row, column);
     }
 
-    public void needAddWinner(String name, long time, ArrayList<Winner> winners) throws FileNotFoundException {
-        minesweeper.addWinner(name, time, winners);
+    public void needSetQuestion(int row, int column) throws OperationNotSupportedException {
+        minesweeper.setQuestion(row, column);
     }
 
-   public ArrayList<Winner> needHighScores() throws FileNotFoundException {
+    public void needDeleteQuestion(int row, int column) throws OperationNotSupportedException {
+        minesweeper.deleteQuestion(row, column);
+    }
+
+    public void needAddWinner(String name, long time, ArrayList<Winner> winners) throws FileNotFoundException {
+        Minesweeper.addWinner(name, time, winners);
+    }
+
+    public void needFastOpen(int row, int column) throws OperationNotSupportedException, VictoryException, GameOverException {
+        minesweeper.fastOpenNeighbors(row, column);
+    }
+
+    public ArrayList<Winner> needHighScores() throws FileNotFoundException {
         return Minesweeper.getWinners();
-   }
+    }
 }

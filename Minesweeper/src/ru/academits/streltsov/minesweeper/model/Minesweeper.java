@@ -1,5 +1,8 @@
 package ru.academits.streltsov.minesweeper.model;
 
+import ru.academits.streltsov.minesweeper.model.exceptions.GameOverException;
+import ru.academits.streltsov.minesweeper.model.exceptions.VictoryException;
+
 import javax.naming.OperationNotSupportedException;
 import java.io.*;
 import java.util.*;
@@ -8,7 +11,8 @@ public class Minesweeper {
     private static final String BEGINNER = "Новичок";
     private static final String AMATEUR = "Любитель";
     private static final String EXPERT = "Эксперт";
-    private static final String[] LEVELS = new String[]{BEGINNER, AMATEUR, EXPERT};
+    private static final String USER = "Пользовательский";
+    private static final String[] LEVELS = new String[]{BEGINNER, AMATEUR, EXPERT, USER};
 
     private static final int ROWS_NUMBER_FOR_BEGINNER = 9;
     private static final int COLUMNS_NUMBER_FOR_BEGINNER = 9;
@@ -22,8 +26,12 @@ public class Minesweeper {
     private static final int COLUMNS_NUMBER_FOR_EXPERT = 16;
     private static final int MINES_NUMBER_FOR_EXPERT = 99;
 
-    private static final int MINE = -1;
-    private static final int WITHOUT_MINE_NEIGHBOURS_CELL_VALUE = 0;
+    private static final int MIN_ROWS_NUMBER = 9;
+    private static final int MAX_ROWS_NUMBER = 30;
+    private static final int MIN_COLUMNS_NUMBER = 9;
+    private static final int MAX_COLUMNS_NUMBER = 24;
+    private static final int MIN_MINES_NUMBER = 10;
+
     private static final String INCREASE_OPERATION = "+";
     private static final String DECREASE_OPERATION = "-";
     private static final Random r = new Random(System.currentTimeMillis());
@@ -62,6 +70,30 @@ public class Minesweeper {
         }
     }
 
+    public void initField(int rowsNumber, int columnsNumber, int minesNumber) {
+        if (rowsNumber < MIN_ROWS_NUMBER || rowsNumber > MAX_ROWS_NUMBER) {
+            throw new IllegalArgumentException("Число строк должно быть не менее " + MIN_ROWS_NUMBER  +
+                    "и не более " + MAX_ROWS_NUMBER);
+        }
+
+        if (columnsNumber < MIN_COLUMNS_NUMBER || columnsNumber > MAX_COLUMNS_NUMBER) {
+            throw new IllegalArgumentException("Число столбцов должно быть не менее " + MIN_COLUMNS_NUMBER  +
+                    "и не более " + MAX_COLUMNS_NUMBER);
+        }
+
+        if (minesNumber < MIN_MINES_NUMBER) {
+            throw new IllegalArgumentException("Минимальное число мин - " + MIN_MINES_NUMBER);
+        }
+
+        int maxMinesNumber = (rowsNumber - 1) * (columnsNumber - 1);
+        if (minesNumber > maxMinesNumber) {
+            throw new IllegalArgumentException("Максимальное число мин при таких размерах - " + maxMinesNumber);
+        }
+
+        initParameters(rowsNumber, columnsNumber, minesNumber);
+        fillCells();
+    }
+
     public String[] getLevels() {
         return LEVELS;
     }
@@ -75,7 +107,7 @@ public class Minesweeper {
         cells = new Cell[rowsNumber][columnsNumber];
         for (int i = 0; i < rowsNumber; ++i) {
             for (int j = 0; j < columnsNumber; ++j) {
-                cells[i][j] = new Cell(0);
+                cells[i][j] = new Cell();
             }
         }
     }
@@ -87,9 +119,9 @@ public class Minesweeper {
             do {
                 row = r.nextInt(rowsNumber);
                 column = r.nextInt(columnsNumber);
-            } while (cells[row][column].getValue() == MINE);
+            } while (cells[row][column].isMine());
 
-            cells[row][column].setValue(MINE);
+            cells[row][column].putMine();
         }
     }
 
@@ -97,21 +129,14 @@ public class Minesweeper {
         return i >= 0 && i < rowsNumber && j >= 0 && j < columnsNumber;
     }
 
-    private boolean isMine(int cellValue) {
-        return cellValue == MINE;
-    }
-
-    private void modify(int i, int j, String operation) {
+    private void changeCellValue(int i, int j, String operation) {
         if (isExist(i, j)) {
-            int cellValue = cells[i][j].getValue();
-
-            if (!isMine(cellValue)) {
+            if (!cells[i][j].isMine()) {
                 if (operation.equals(INCREASE_OPERATION)) {
-                    ++cellValue;
+                    cells[i][j].increaseValue();
                 } else {
-                    --cellValue;
+                    cells[i][j].decreaseValue();
                 }
-                cells[i][j].setValue(cellValue);
             }
         }
     }
@@ -122,7 +147,7 @@ public class Minesweeper {
                 if (i == row && j == column) {
                     continue;
                 }
-                modify(i, j, operation);
+                changeCellValue(i, j, operation);
             }
         }
     }
@@ -131,7 +156,7 @@ public class Minesweeper {
         putMines();
         for (int i = 0; i < rowsNumber; ++i) {
             for (int j = 0; j < columnsNumber; ++j) {
-                if (cells[i][j].getValue() == MINE) {
+                if (cells[i][j].isMine()) {
                     modifyNeighbors(i, j, INCREASE_OPERATION);
                 }
             }
@@ -142,51 +167,51 @@ public class Minesweeper {
         return Arrays.copyOf(cells, cells.length);
     }
 
-    private void openNeighbors(int row, int column) {
-        class Position {
-            private int row;
-            private int column;
+    private class Position {
+        private int row;
+        private int column;
 
-            private Position(int row, int column) {
-                this.row = row;
-                this.column = column;
-            }
-
-            private int getRow() {
-                return row;
-            }
-
-            private int getColumn() {
-                return column;
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                if (this == obj) {
-                    return true;
-                }
-
-                if (obj == null) {
-                    return false;
-                }
-
-                if (getClass() != obj.getClass()) {
-                    return false;
-                }
-
-                Position other = (Position) obj;
-
-                return row == other.getRow() && column == other.getColumn();
-            }
+        private Position(int row, int column) {
+            this.row = row;
+            this.column = column;
         }
 
+        private int getRow() {
+            return row;
+        }
+
+        private int getColumn() {
+            return column;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+
+            if (obj == null) {
+                return false;
+            }
+
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+
+            Position other = (Position) obj;
+
+            return row == other.getRow() && column == other.getColumn();
+        }
+    }
+
+    private void openNeighbors(int row, int column) {
         Deque<Position> stack = new LinkedList<>();
 
         do {
             for (int i = row - 1; i <= row + 1; ++i) {
                 for (int j = column - 1; j <= column + 1; ++j) {
                     if (isExist(i, j) && !cells[i][j].isOpened() && !cells[i][j].isMarked()
-                            && cells[i][j].getValue() != MINE && !stack.contains(new Position(i, j))) {
+                            && !cells[i][j].isMine() && !cells[i][j].isQuestioned() && !stack.contains(new Position(i, j))) {
                         stack.addLast(new Position(i, j));
                     }
                 }
@@ -203,7 +228,7 @@ public class Minesweeper {
             ++openCellsNumber;
 
             while (true) {
-                if (cells[row][column].getValue() != WITHOUT_MINE_NEIGHBOURS_CELL_VALUE) {
+                if (!cells[row][column].isNoMineNear()) {
                     if (stack.isEmpty()) {
                         return;
                     }
@@ -232,11 +257,10 @@ public class Minesweeper {
         --column;
         checkCoordinates(row, column);
 
-        int cellValue = cells[row][column].getValue();
-        if (!isMine(cellValue)) {
+        if (!cells[row][column].isMine()) {
             cells[row][column].open();
             ++openCellsNumber;
-            if (cells[row][column].getValue() == WITHOUT_MINE_NEIGHBOURS_CELL_VALUE) {
+            if (cells[row][column].isNoMineNear()) {
                 openNeighbors(row, column);
             }
         } else {
@@ -245,27 +269,26 @@ public class Minesweeper {
             do {
                 aRow = r.nextInt(rowsNumber);
                 aColumn = r.nextInt(columnsNumber);
-            } while (isMine(cells[aRow][aColumn].getValue()));
+            } while (cells[aRow][aColumn].isMine());
 
-            cells[aRow][aColumn].setValue(MINE);
+            cells[aRow][aColumn].putMine();
             modifyNeighbors(aRow, aColumn, INCREASE_OPERATION);
             modifyNeighbors(row, column, DECREASE_OPERATION);
+            cells[row][column].increaseValue();
 
-            cellValue = 0;
             for (int i = row - 1; i <= row + 1; ++i) {
                 for (int j = column - 1; j <= column + 1; ++j) {
                     if (i == row && j == column) {
                         continue;
                     }
-                    if (isExist(i, j) && isMine(cells[i][j].getValue())) {
-                        ++cellValue;
+                    if (isExist(i, j) && cells[i][j].isMine()) {
+                        cells[row][column].increaseValue();
                     }
                 }
             }
-            cells[row][column].setValue(cellValue);
             cells[row][column].open();
             ++openCellsNumber;
-            if (cells[row][column].getValue() == WITHOUT_MINE_NEIGHBOURS_CELL_VALUE) {
+            if (cells[row][column].isNoMineNear()) {
                 openNeighbors(row, column);
             }
         }
@@ -287,11 +310,11 @@ public class Minesweeper {
         cells[row][column].open();
         ++openCellsNumber;
 
-        if (isMine(cells[row][column].getValue())) {
+        if (cells[row][column].isMine()) {
             throw new GameOverException("Вы проиграли!");
         }
 
-        if (cells[row][column].getValue() == WITHOUT_MINE_NEIGHBOURS_CELL_VALUE) {
+        if (cells[row][column].isNoMineNear()) {
             openNeighbors(row, column);
         }
 
@@ -314,7 +337,6 @@ public class Minesweeper {
         }
 
         if (cells[row][column].isMarked()) {
-
             throw new OperationNotSupportedException("Ячейка уже помечена.");
         }
 
@@ -325,6 +347,7 @@ public class Minesweeper {
     public void deleteMark(int row, int column) throws OperationNotSupportedException {
         --row;
         --column;
+        checkCoordinates(row, column);
 
         if (cells[row][column].isOpened()) {
             throw new OperationNotSupportedException("На открытой ячейке не может быть метки.");
@@ -338,7 +361,39 @@ public class Minesweeper {
         --marksNumber;
     }
 
-    public void addWinner(String name, long time, ArrayList<Winner> winners) throws FileNotFoundException {
+    public void setQuestion(int row, int column) throws OperationNotSupportedException {
+        --row;
+        --column;
+        checkCoordinates(row, column);
+
+        if (cells[row][column].isOpened()) {
+            throw new OperationNotSupportedException("Ячейка уже открыта.");
+        }
+
+        if (cells[row][column].isQuestioned()) {
+            throw new OperationNotSupportedException("Ячейка уже под вопросом.");
+        }
+
+        cells[row][column].question();
+    }
+
+    public void deleteQuestion(int row, int column) throws OperationNotSupportedException {
+        --row;
+        --column;
+        checkCoordinates(row, column);
+
+        if (cells[row][column].isOpened()) {
+            throw new OperationNotSupportedException("Открытая ячейка не может быть под вопросом.");
+        }
+
+        if (!cells[row][column].isQuestioned()) {
+            throw new OperationNotSupportedException("Ячейка не была под вопросом.");
+        }
+
+        cells[row][column].deleteQuestion();
+    }
+
+    public static void addWinner(String name, long time, ArrayList<Winner> winners) throws FileNotFoundException {
         if (winners.size() >= HIGH_SCORES_POSITION_NUMBERS) {
             winners.remove(winners.size() - 1);
         }
@@ -378,5 +433,51 @@ public class Minesweeper {
             }
         }
         return winners;
+    }
+
+    public void fastOpenNeighbors(int row, int column) throws OperationNotSupportedException, VictoryException, GameOverException {
+        --row;
+        --column;
+        checkCoordinates(row, column);
+
+        if (!cells[row][column].isOpened()) {
+            throw new OperationNotSupportedException("Операция доступна только для открытой ячейки.");
+        }
+
+        int markedCellsNumber = 0;
+        for (int i = row - 1; i <= row + 1; ++i) {
+            for (int j = column - 1; j <= column + 1; ++j) {
+                if (i == row && j == column) {
+                    continue;
+                }
+                if (isExist(i, j) && cells[i][j].isMarked()) {
+                    ++markedCellsNumber;
+                }
+            }
+        }
+
+        if (markedCellsNumber < cells[row][column].getValue()) {
+            throw new IllegalArgumentException("Не хватает пометок рядом с ячейкой.");
+        } else {
+            for (int i = row - 1; i <= row + 1; ++i) {
+                for (int j = column - 1; j <= column + 1; ++j) {
+                    if (i == row && j == column) {
+                        continue;
+                    }
+                    if (isExist(i, j) && !cells[i][j].isMarked() && !cells[i][j].isQuestioned() && !cells[i][j].isOpened()) {
+                        cells[i][j].open();
+                        ++openCellsNumber;
+
+                        if (openCellsNumber == cellsWithoutMineNumber) {
+                            throw new VictoryException("Победа!");
+                        }
+
+                        if (cells[i][j].isMine()) {
+                            throw new GameOverException("Вы проиграли");
+                        }
+                    }
+                }
+            }
+        }
     }
 }
