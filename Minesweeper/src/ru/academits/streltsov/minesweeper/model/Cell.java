@@ -1,15 +1,12 @@
 package ru.academits.streltsov.minesweeper.model;
 
 public class Cell {
+    private static final int MINE = -1;
+
     private int value;
     private boolean isOpened;
     private boolean isMarked;
-
-    Cell(int value) {
-        this.value = value;
-        isOpened = false;
-        isMarked = false;
-    }
+    private boolean isQuestioned;
 
     public int getValue() {
         return value;
@@ -23,6 +20,8 @@ public class Cell {
         return isOpened;
     }
 
+    public boolean isQuestioned() {return isQuestioned; }
+
     void mark() {
         isMarked = true;
     }
@@ -31,11 +30,35 @@ public class Cell {
         isMarked = false;
     }
 
+    void question() {
+        isQuestioned = true;
+    }
+
+    void deleteQuestion() {
+        isQuestioned = false;
+    }
+
     void open() {
         isOpened = true;
     }
 
-    void setValue(int value) {
-        this.value = value;
+    void increaseValue() {
+        ++value;
+    }
+
+    void decreaseValue() {
+        --value;
+    }
+
+    boolean isMine() {
+        return value == MINE;
+    }
+
+    boolean isNoMineNear() {
+        return value == 0;
+    }
+
+    void putMine() {
+        value = MINE;
     }
 }
