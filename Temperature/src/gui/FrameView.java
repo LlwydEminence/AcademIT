@@ -92,15 +92,12 @@ public class FrameView {
             public void actionPerformed(ActionEvent e) {
                 try {
                     double temperatureValue = Double.parseDouble(temperature.getText());
+                    double celsiusValue =
+                            temperatureConverters[fromScale.getSelectedIndex()].convertTemperatureToCelsius(temperatureValue);
                     for (TemperatureConverter tc : temperatureConverters) {
-                        if (tc.getName().equals(fromScale.getItemAt(fromScale.getSelectedIndex()))) {
-                            double celsiusValue = tc.convertTemperatureToCelsius(temperatureValue);
-                            for (TemperatureConverter tc1 : temperatureConverters) {
-                                if (tc1.getName().equals(toScale.getItemAt(toScale.getSelectedIndex()))) {
-                                    printConvertedTemperature(tc1.convertCelsiusToTemperature(celsiusValue));
-                                    return;
-                                }
-                            }
+                        if (tc.getName().equals(toScale.getItemAt(toScale.getSelectedIndex()))) {
+                            printConvertedTemperature(tc.convertCelsiusToTemperature(celsiusValue));
+                            return;
                         }
                     }
                 } catch (NumberFormatException ex) {
