@@ -4,15 +4,13 @@ import common.TemperatureConverter;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class FrameView {
     private final JFrame frame;
     private final TemperatureConverter[] temperatureConverters;
     private final JComboBox<String> fromScale = new JComboBox<>();
     private JComboBox<String> toScale = new JComboBox<>();
-    private final JTextField result;
+    private final JLabel resultLabel;
     private final JButton convertButton;
     private final JTextField temperature;
 
@@ -26,7 +24,7 @@ public class FrameView {
 
         fromScale.setSelectedIndex(0);
         fillToScale();
-        result = new JTextField(13);
+        resultLabel = new JLabel();
         convertButton = new JButton("Перевести");
         temperature = new JTextField(12);
     }
@@ -45,13 +43,10 @@ public class FrameView {
     }
 
     public void startTemperatureConverter() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                initContent();
-                initFrame();
-                initEvents();
-            }
+        SwingUtilities.invokeLater(() -> {
+            initContent();
+            initFrame();
+            initEvents();
         });
     }
 
@@ -71,60 +66,50 @@ public class FrameView {
 
         JLabel toScaleLabel = new JLabel("Результирующая: ");
         contentPanel.add(toScaleLabel, new GBC(0, 1).setAnchor(GridBagConstraints.WEST));
-        contentPanel.add(toScale, new GBC(1, 1));
+        contentPanel.add(toScale, new GBC(1, 1).setInsets(3, 1, 1, 1));
 
         JLabel temperatureEnterLabel = new JLabel("Введите температуру: ");
         contentPanel.add(temperatureEnterLabel, new GBC(0, 2));
 
-        contentPanel.add(temperature, new GBC(1, 2).setAnchor(GridBagConstraints.WEST));
-        contentPanel.add(convertButton, new GBC(2, 2));
+        contentPanel.add(temperature, new GBC(1, 2).setInsets(3, 1, 1, 1));
+        contentPanel.add(convertButton, new GBC(2, 3));
 
-        result.setEditable(false);
-        contentPanel.add(result, new GBC(3,2).setInsets(0, 1, 0, 0));
+        contentPanel.add(resultLabel, new GBC(0, 3, 2, 1).setAnchor(GridBagConstraints.WEST));
 
         frame.setContentPane(contentPanel);
         frame.pack();
     }
 
     private void initEvents() {
-        convertButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    double temperatureValue = Double.parseDouble(temperature.getText());
-                    double celsiusValue =
-                            temperatureConverters[fromScale.getSelectedIndex()].convertTemperatureToCelsius(temperatureValue);
-                    for (TemperatureConverter tc : temperatureConverters) {
-                        if (tc.getName().equals(toScale.getItemAt(toScale.getSelectedIndex()))) {
-                            printConvertedTemperature(tc.convertCelsiusToTemperature(celsiusValue));
-                            return;
-                        }
+        convertButton.addActionListener(e -> {
+            try {
+                double temperatureValue = Double.parseDouble(temperature.getText());
+                double celsiusValue =
+                        temperatureConverters[fromScale.getSelectedIndex()].convertTemperatureToCelsius(temperatureValue);
+                for (TemperatureConverter tc : temperatureConverters) {
+                    if (tc.getName().equals(toScale.getItemAt(toScale.getSelectedIndex()))) {
+                        printConvertedTemperature(tc.convertCelsiusToTemperature(celsiusValue));
+                        return;
                     }
-                } catch (NumberFormatException ex) {
-                    result.setText("Температура должна быть числом");
                 }
+            } catch (NumberFormatException ex) {
+                resultLabel.setForeground(Color.RED);
+                resultLabel.setText("Температура должна быть числом");
             }
         });
 
-        fromScale.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                result.setText(null);
-                toScale.removeAllItems();
-                fillToScale();
-                toScale.setPreferredSize(fromScale.getPreferredSize());
-            }
+        fromScale.addActionListener(e -> {
+            resultLabel.setText(null);
+            toScale.removeAllItems();
+            fillToScale();
+            toScale.setPreferredSize(fromScale.getPreferredSize());
         });
 
-        toScale.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                result.setText(null);
-            }
-        });
+        toScale.addActionListener(e -> resultLabel.setText(null));
     }
 
     private void printConvertedTemperature(double temperature) {
-       result.setText(Double.toString(temperature));
+        resultLabel.setForeground(Color.BLACK);
+        resultLabel.setText(Double.toString(temperature));
     }
 }
