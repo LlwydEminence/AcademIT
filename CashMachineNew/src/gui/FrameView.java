@@ -6,93 +6,123 @@ import model.Cash;
 
 import javax.naming.OperationNotSupportedException;
 import javax.swing.*;
+import java.awt.*;
 
 public class FrameView implements View {
     private final static String DEPOSIT_CASH = "Внести наличные";
     private final static String WITHDRAW_CASH = "Снять наличные";
     private final static String DISPLAY_STATUS = "Отобразить состояние банкомата";
-    private final static String CONTINUATION = "Продолжить работу с банкоматом?";
-    private final static String[] NOTES = new String[] {"10", "50", "100", "500", "1000", "5000"};
 
+    private final JFrame frame = new JFrame();
+    private final JPanel panel = new JPanel(new GridBagLayout());
+    private final JPanel buttonPanel = new JPanel();
+    private final JLabel label = new JLabel("Количество вносимых купюр: ");
+    private final JLabel denominationLabel = new JLabel("Выберите номинал: ");
+    private final JButton button = new JButton("Внести");
+    private final JTextField textField = new JTextField(5);
+    private final JComboBox<String> modeComboBox = new JComboBox<>(new String[] {DEPOSIT_CASH, WITHDRAW_CASH, DISPLAY_STATUS});
+    private JComboBox<Integer> comboBox;
     private Controller controller;
 
     public void startCashMachine() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                do{
-                    initContent();
-                } while (askToContinue() == JOptionPane.YES_OPTION);
-                System.exit(0);
-            }
+        SwingUtilities.invokeLater(() -> {
+            initContent();
+            initFrame();
+            initEvents();
         });
     }
 
     private void initContent() {
-        String selection = (String) JOptionPane.showInputDialog(null, "Что нужно сделать?",
-                "Банкомат", JOptionPane.QUESTION_MESSAGE, null,
-                new String[] {DEPOSIT_CASH, WITHDRAW_CASH, DISPLAY_STATUS}, DEPOSIT_CASH);
+        comboBox = new JComboBox<>(controller.needDenominations());
+        comboBox.setSelectedIndex(0);
+        panel.add(label, new GBC(0, 0).setAnchor(GridBagConstraints.WEST));
+        panel.add(textField, new GBC(1,0));
+        panel.add(denominationLabel, new GBC(0, 1).setAnchor(GridBagConstraints.WEST));
+        panel.add(comboBox, new GBC(1, 1));
+        buttonPanel.add(button);
+    }
 
-        if (selection == null) {
-            System.exit(0);
-        } else if (selection.equals(DEPOSIT_CASH)) {
-            String requiredDenomination = (String) JOptionPane.showInputDialog(null,
-                    "Какими купюрами вы хотите внести наличные?", "Банкомат", JOptionPane.QUESTION_MESSAGE,
-                    null, NOTES, NOTES[0]);
+    private void initFrame() {
+        modeComboBox.setSelectedIndex(0);
+        frame.add(modeComboBox, BorderLayout.NORTH);
+        frame.add(panel, BorderLayout.CENTER);
+        frame.add(buttonPanel, BorderLayout.SOUTH);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+    }
 
-            if (requiredDenomination == null) {
-                return;
-            }
+    private void initEvents() {
+        modeComboBox.addActionListener(e -> {
+            switch (modeComboBox.getItemAt(modeComboBox.getSelectedIndex())) {
+                case DEPOSIT_CASH: {
+                    if (!panel.isVisible()) {
+                        panel.setVisible(true);
+                        frame.pack();
+                    }
 
-            int numberOfNotes;
-            while (true) {
-                try {
-                    numberOfNotes = Integer.parseInt(JOptionPane.showInputDialog(null,
-                            "Сколько купюр вы хотите внести?", "Банкомат", JOptionPane.QUESTION_MESSAGE));
+                    label.setText("Количество вносимых купюр: ");
+                    textField.setText(null);
+                    comboBox.setSelectedIndex(0);
+                    button.setText("Внести");
                     break;
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Количество должно быть целым числом!",
-                            "Ошибка", JOptionPane.ERROR_MESSAGE);
+                }
+
+                case WITHDRAW_CASH: {
+                    if (!panel.isVisible()) {
+                        panel.setVisible(true);
+                        frame.pack();
+                    }
+
+                    label.setText("Введите сумму: ");
+                    textField.setText(null);
+                    comboBox.setSelectedIndex(0);
+                    button.setText("Выдать");
+                    break;
+                }
+
+                case DISPLAY_STATUS: {
+                    panel.setVisible(false);
+                    frame.pack();
+                    button.setText("Отобразить");
+                    break;
                 }
             }
+        });
 
+        button.addActionListener(e -> {
             try {
-                controller.needDeposit(Integer.parseInt(requiredDenomination), numberOfNotes);
+                String selectedItem = modeComboBox.getItemAt(modeComboBox.getSelectedIndex());
+                switch (selectedItem) {
+                    case DEPOSIT_CASH: {
+                        controller.needDeposit(comboBox.getItemAt(comboBox.getSelectedIndex()),
+                                Integer.parseInt(textField.getText()));
+                        break;
+                    }
+
+                    case WITHDRAW_CASH: {
+                        controller.needWithdrawCash(Integer.parseInt(textField.getText()),
+                                comboBox.getItemAt(comboBox.getSelectedIndex()));
+                        break;
+                    }
+
+                    default: {
+                        controller.needData();
+                        break;
+                    }
+                }
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null,
+                        "Вводимая величина должна быть целым положительным числом",
+                        "Ошибка", JOptionPane.ERROR_MESSAGE);
             } catch (OperationNotSupportedException | IllegalArgumentException ex) {
                 JOptionPane.showMessageDialog(null, ex.getMessage(),
                         "Ошибка", JOptionPane.ERROR_MESSAGE);
             }
-
-        } else if (selection.equals(WITHDRAW_CASH)) {
-            int amount;
-            while (true) {
-                try {
-                    amount = Integer.parseInt(JOptionPane.showInputDialog(null,
-                            "Какую сумму вы хотите снять?", "Банкомат", JOptionPane.QUESTION_MESSAGE));
-                    break;
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Сумма должна быть целым числом!",
-                            "Ошибка", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-
-            String requiredDenomination = (String) JOptionPane.showInputDialog(null,
-                    "Какими купюрами вы хотите получить сумму?", "Банкомат", JOptionPane.QUESTION_MESSAGE,
-                    null, NOTES, NOTES[0]);
-
-            if (requiredDenomination == null) {
-                return;
-            }
-
-            try {
-                controller.needWithdrawCash(amount, Integer.parseInt(requiredDenomination));
-            } catch (OperationNotSupportedException | IllegalArgumentException ex) {
-                JOptionPane.showMessageDialog(null, ex.getMessage(),
-                        "Ошибка", JOptionPane.ERROR_MESSAGE);
-            }
-        } else {
-            controller.needData();
-        }
+        });
     }
 
     public void addController(Controller controller) {
@@ -109,11 +139,14 @@ public class FrameView implements View {
         JOptionPane.showMessageDialog(null, report,"Внесено", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    public void displayStatus(int amount, Cash[] cash) {
+    public void displayStatus(int amount, int notesNumber, Cash[] cash) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("В банокомате доступно ");
         stringBuilder.append(amount);
         stringBuilder.append(" рублей.");
+        stringBuilder.append(System.lineSeparator());
+        stringBuilder.append("Доступно купюр для внесения: ");
+        stringBuilder.append(notesNumber);
         if (amount != 0) {
             stringBuilder.append(System.lineSeparator());
             stringBuilder.append("В наличии купюры следующих номиналов:");
@@ -135,17 +168,14 @@ public class FrameView implements View {
     }
 
     private String getEnding(int notesNumber) {
-        if (notesNumber % 10 == 1) {
+        if (notesNumber % 10 == 1 && (notesNumber - 11) % 100 != 0) {
             return  "а";
-        } else if (notesNumber % 10 == 2 || notesNumber % 10 == 3 || notesNumber % 10 == 4) {
+        } else if ((notesNumber % 10 == 2 && (notesNumber - 12) % 100 != 0) ||
+                (notesNumber % 10 == 3 && (notesNumber - 13) % 100 != 0)||
+                (notesNumber % 10 == 4 && (notesNumber - 14) % 100 != 0)) {
             return  "ы";
         } else {
             return "";
         }
-    }
-
-    private int askToContinue() {
-        return JOptionPane.showConfirmDialog(null, CONTINUATION, null,
-                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
     }
 }

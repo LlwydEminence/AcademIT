@@ -135,7 +135,7 @@ public class ConsoleView implements View {
         System.out.println("Выдано " + amount + " рублей.");
     }
 
-    public void displayStatus(int amountOfMoney, Cash[] cash) {
+    public void displayStatus(int amountOfMoney, int notesNumber, Cash[] cash) {
         System.out.println("В банкомате доступно " + amountOfMoney + " рублей.");
         if (amountOfMoney != 0) {
             System.out.println("В наличии купюры следующих номиналов:");

@@ -2,7 +2,6 @@ package controller;
 
 import common.View;
 import model.CashMachine;
-import textui.ConsoleView;
 
 import javax.naming.OperationNotSupportedException;
 
@@ -24,6 +23,10 @@ public class Controller {
     }
 
     public void needData() {
-        view.displayStatus(cashMachine.getAmountOfMoney(), cashMachine.getCash());
+        view.displayStatus(cashMachine.getAmountOfMoney(), cashMachine.getAvailableNotesNumber(), cashMachine.getCash());
+    }
+
+    public Integer[] needDenominations() {
+        return cashMachine.getDenominations();
     }
 }

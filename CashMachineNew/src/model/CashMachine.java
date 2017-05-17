@@ -8,10 +8,17 @@ public class CashMachine {
     private static final Denomination[] DENOMINATIONS = Denomination.values();
     private static final int DENOMINATION_NUMBER = DENOMINATIONS.length;
     private static final int MAX_NOTES_NUMBER = DENOMINATION_NUMBER * DEFAULT_NOTE_NUMBER;
+    private static final Integer[] denominations = new Integer[DENOMINATION_NUMBER];
 
     private ArrayList<Cash> notes;
     private int notesNumber;
     private int amountOfMoney;
+
+    static {
+        for (int i = 0; i < DENOMINATION_NUMBER; ++i) {
+            denominations[i] = DENOMINATIONS[i].getValue();
+        }
+    }
 
     public CashMachine() {
         notes = new ArrayList<>();
@@ -112,5 +119,13 @@ public class CashMachine {
         notesNumber -= deductibleCashNumber;
         amountOfMoney -= requiredAmount;
         return requiredAmount;
+    }
+
+    public Integer[] getDenominations() {
+        return denominations;
+    }
+
+    public int getAvailableNotesNumber() {
+        return (MAX_NOTES_NUMBER - notesNumber);
     }
 }
