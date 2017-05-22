@@ -131,8 +131,9 @@ public class ConsoleView implements View {
         System.out.println("Внесено " + amount + " рублей.");
     }
 
-    public void reportForWithdrawCash(int amount) {
-        System.out.println("Выдано " + amount + " рублей.");
+    public void reportForWithdrawCash(Cash cash) {
+        int notesNumber = cash.getNumber();
+        System.out.println("Выдано " + notesNumber + " купюр" + getEnding(notesNumber) + " по " + cash.getValue() + " рублей");
     }
 
     public void displayStatus(int amountOfMoney, int notesNumber, Cash[] cash) {

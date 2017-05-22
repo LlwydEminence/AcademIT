@@ -86,7 +86,7 @@ public class CashMachine {
         return increasingAmount;
     }
 
-    public int withdrawCash(int requiredAmount, int requiredDenomination) throws OperationNotSupportedException {
+    public Cash withdrawCash(int requiredAmount, int requiredDenomination) throws OperationNotSupportedException {
         Cash requiredCash = checkCash(requiredDenomination);
 
         if (requiredAmount <= 0) {
@@ -118,7 +118,7 @@ public class CashMachine {
         requiredCash.decreaseNumber(deductibleCashNumber);
         notesNumber -= deductibleCashNumber;
         amountOfMoney -= requiredAmount;
-        return requiredAmount;
+        return new Cash(requiredCash.getDenomination(), deductibleCashNumber);
     }
 
     public Integer[] getDenominations() {

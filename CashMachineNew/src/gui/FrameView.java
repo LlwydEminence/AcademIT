@@ -47,6 +47,7 @@ public class FrameView implements View {
         frame.add(modeComboBox, BorderLayout.NORTH);
         frame.add(panel, BorderLayout.CENTER);
         frame.add(buttonPanel, BorderLayout.SOUTH);
+        frame.setTitle("Банкомат");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(null);
@@ -58,26 +59,22 @@ public class FrameView implements View {
         modeComboBox.addActionListener(e -> {
             switch (modeComboBox.getItemAt(modeComboBox.getSelectedIndex())) {
                 case DEPOSIT_CASH: {
-                    if (!panel.isVisible()) {
-                        panel.setVisible(true);
-                        frame.pack();
-                    }
-
+                    panel.setVisible(false);
                     label.setText("Количество вносимых купюр: ");
                     textField.setText(null);
+                    panel.setVisible(true);
+                    frame.pack();
                     comboBox.setSelectedIndex(0);
                     button.setText("Внести");
                     break;
                 }
 
                 case WITHDRAW_CASH: {
-                    if (!panel.isVisible()) {
-                        panel.setVisible(true);
-                        frame.pack();
-                    }
-
+                    panel.setVisible(false);
                     label.setText("Введите сумму: ");
                     textField.setText(null);
+                    panel.setVisible(true);
+                    frame.pack();
                     comboBox.setSelectedIndex(0);
                     button.setText("Выдать");
                     break;
@@ -134,9 +131,10 @@ public class FrameView implements View {
         JOptionPane.showMessageDialog(null, report,"Внесено", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    public void reportForWithdrawCash(int amount) {
-        String report = "Выдано " + amount + " рублей.";
-        JOptionPane.showMessageDialog(null, report,"Внесено", JOptionPane.INFORMATION_MESSAGE);
+    public void reportForWithdrawCash(Cash cash) {
+        int notesNumber = cash.getNumber();
+        String report = "Выдано " + notesNumber + " купюр" + getEnding(notesNumber) + " по " + cash.getValue() + " рублей";
+        JOptionPane.showMessageDialog(null, report,"Выдано", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void displayStatus(int amount, int notesNumber, Cash[] cash) {
