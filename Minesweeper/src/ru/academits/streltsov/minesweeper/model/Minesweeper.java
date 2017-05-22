@@ -8,11 +8,11 @@ import java.io.*;
 import java.util.*;
 
 public class Minesweeper {
-    private static final String BEGINNER = "Новичок";
-    private static final String AMATEUR = "Любитель";
-    private static final String EXPERT = "Эксперт";
-    private static final String USER = "Пользовательский";
-    private static final String[] LEVELS = new String[]{BEGINNER, AMATEUR, EXPERT, USER};
+    static final String BEGINNER = "Новичок";
+    static final String AMATEUR = "Любитель";
+    static final String EXPERT = "Эксперт";
+    public static final String USER = "Пользовательский";
+    public static final String[] LEVELS = new String[]{BEGINNER, AMATEUR, EXPERT, USER};
 
     private static final int ROWS_NUMBER_FOR_BEGINNER = 9;
     private static final int COLUMNS_NUMBER_FOR_BEGINNER = 9;
@@ -35,7 +35,6 @@ public class Minesweeper {
     private static final String INCREASE_OPERATION = "+";
     private static final String DECREASE_OPERATION = "-";
     private static final Random r = new Random(System.currentTimeMillis());
-    private static final int HIGH_SCORES_POSITION_NUMBERS = 10;
 
     private int rowsNumber;
     private int columnsNumber;
@@ -44,6 +43,7 @@ public class Minesweeper {
     private int cellsWithoutMineNumber;
     private int marksNumber;
     private Cell[][] cells;
+    private HighScores highScores;
 
     public Minesweeper() {
     }
@@ -68,19 +68,33 @@ public class Minesweeper {
                 break;
             }
         }
+
+        highScores = new HighScores(level);
     }
 
-    public void initField(int rowsNumber, int columnsNumber, int minesNumber) {
+    public int getMinesNumber() {
+        return minesNumber;
+    }
+
+    public void initRowsNumber(int rowsNumber) {
         if (rowsNumber < MIN_ROWS_NUMBER || rowsNumber > MAX_ROWS_NUMBER) {
-            throw new IllegalArgumentException("Число строк должно быть не менее " + MIN_ROWS_NUMBER  +
-                    "и не более " + MAX_ROWS_NUMBER);
+            throw new IllegalArgumentException("Число строк должно быть не менее " + MIN_ROWS_NUMBER +
+                    " и не более " + MAX_ROWS_NUMBER);
         }
 
+        this.rowsNumber = rowsNumber;
+    }
+
+    public void initColumnsNumber(int columnsNumber) {
         if (columnsNumber < MIN_COLUMNS_NUMBER || columnsNumber > MAX_COLUMNS_NUMBER) {
-            throw new IllegalArgumentException("Число столбцов должно быть не менее " + MIN_COLUMNS_NUMBER  +
+            throw new IllegalArgumentException("Число столбцов должно быть не менее " + MIN_COLUMNS_NUMBER +
                     "и не более " + MAX_COLUMNS_NUMBER);
         }
 
+        this.columnsNumber = columnsNumber;
+    }
+
+    public void initMinesNumber(int minesNumber) {
         if (minesNumber < MIN_MINES_NUMBER) {
             throw new IllegalArgumentException("Минимальное число мин - " + MIN_MINES_NUMBER);
         }
@@ -89,19 +103,28 @@ public class Minesweeper {
         if (minesNumber > maxMinesNumber) {
             throw new IllegalArgumentException("Максимальное число мин при таких размерах - " + maxMinesNumber);
         }
-
-        initParameters(rowsNumber, columnsNumber, minesNumber);
-        fillCells();
     }
 
-    public String[] getLevels() {
-        return LEVELS;
+    public void initField() {
+        initParameters();
+        fillCells();
     }
 
     private void initParameters(int rowsNumber, int columnsNumber, int minesNumber) {
         this.rowsNumber = rowsNumber;
         this.columnsNumber = columnsNumber;
         this.minesNumber = minesNumber;
+        cellsWithoutMineNumber = rowsNumber * columnsNumber - minesNumber;
+        openCellsNumber = 0;
+        cells = new Cell[rowsNumber][columnsNumber];
+        for (int i = 0; i < rowsNumber; ++i) {
+            for (int j = 0; j < columnsNumber; ++j) {
+                cells[i][j] = new Cell();
+            }
+        }
+    }
+
+    private void initParameters() {
         cellsWithoutMineNumber = rowsNumber * columnsNumber - minesNumber;
         openCellsNumber = 0;
         cells = new Cell[rowsNumber][columnsNumber];
@@ -393,46 +416,12 @@ public class Minesweeper {
         cells[row][column].deleteQuestion();
     }
 
-    public static void addWinner(String name, long time, ArrayList<Winner> winners) throws FileNotFoundException {
-        if (winners.size() >= HIGH_SCORES_POSITION_NUMBERS) {
-            winners.remove(winners.size() - 1);
-        }
-
-        winners.add(new Winner(name, time));
-        winners.sort(new Comparator<Winner>() {
-            @Override
-            public int compare(Winner o1, Winner o2) {
-                long o1Time = o1.getTime();
-                long o2Time = o2.getTime();
-                if (o1Time == o2Time) {
-                    return 0;
-                } else if (o1Time < o2Time) {
-                    return -1;
-                } else {
-                    return 1;
-                }
-            }
-        });
-
-        try (PrintWriter printWriter =
-                     new PrintWriter(new OutputStreamWriter(new FileOutputStream("Minesweeper/src/ru/academits/streltsov/minesweeper/resources/HighScores.txt")))) {
-
-            for (Winner winner : winners) {
-                printWriter.println(winner);
-            }
-        }
-
+    public void addWinner(String name, long time, ArrayList<Winner> winners) throws FileNotFoundException {
+        highScores.add(name, time, winners);
     }
 
-    public static ArrayList<Winner> getWinners() throws FileNotFoundException {
-        ArrayList<Winner> winners = new ArrayList<>();
-        try (Scanner scanner =
-                     new Scanner(new FileInputStream("Minesweeper/src/ru/academits/streltsov/minesweeper/resources/HighScores.txt"))) {
-            while (scanner.hasNext()) {
-                winners.add(new Winner(scanner.next(), scanner.nextLong()));
-            }
-        }
-        return winners;
+    public ArrayList<Winner> getWinners() throws FileNotFoundException {
+        return highScores.getData();
     }
 
     public void fastOpenNeighbors(int row, int column) throws OperationNotSupportedException, VictoryException, GameOverException {
@@ -458,23 +447,23 @@ public class Minesweeper {
 
         if (markedCellsNumber < cells[row][column].getValue()) {
             throw new IllegalArgumentException("Не хватает пометок рядом с ячейкой.");
-        } else {
-            for (int i = row - 1; i <= row + 1; ++i) {
-                for (int j = column - 1; j <= column + 1; ++j) {
-                    if (i == row && j == column) {
-                        continue;
+        }
+
+        for (int i = row - 1; i <= row + 1; ++i) {
+            for (int j = column - 1; j <= column + 1; ++j) {
+                if (i == row && j == column) {
+                    continue;
+                }
+                if (isExist(i, j) && !cells[i][j].isMarked() && !cells[i][j].isQuestioned() && !cells[i][j].isOpened()) {
+                    cells[i][j].open();
+                    ++openCellsNumber;
+
+                    if (openCellsNumber == cellsWithoutMineNumber) {
+                        throw new VictoryException("Победа!");
                     }
-                    if (isExist(i, j) && !cells[i][j].isMarked() && !cells[i][j].isQuestioned() && !cells[i][j].isOpened()) {
-                        cells[i][j].open();
-                        ++openCellsNumber;
 
-                        if (openCellsNumber == cellsWithoutMineNumber) {
-                            throw new VictoryException("Победа!");
-                        }
-
-                        if (cells[i][j].isMine()) {
-                            throw new GameOverException("Вы проиграли");
-                        }
+                    if (cells[i][j].isMine()) {
+                        throw new GameOverException("Вы проиграли");
                     }
                 }
             }

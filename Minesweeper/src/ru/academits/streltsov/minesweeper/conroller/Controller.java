@@ -1,6 +1,7 @@
 package ru.academits.streltsov.minesweeper.conroller;
 
 import ru.academits.streltsov.minesweeper.common.View;
+import ru.academits.streltsov.minesweeper.model.HighScores;
 import ru.academits.streltsov.minesweeper.model.exceptions.GameOverException;
 import ru.academits.streltsov.minesweeper.model.Minesweeper;
 import ru.academits.streltsov.minesweeper.model.exceptions.VictoryException;
@@ -19,16 +20,24 @@ public class Controller {
         this.view = view;
     }
 
-    public String[] needLevels() {
-        return minesweeper.getLevels();
-    }
-
     public void needInitField(String level) {
         minesweeper.initField(level);
     }
 
-    public void needInitField(int rowsNumber, int columnsNumber, int minesNumber) {
-        minesweeper.initField(rowsNumber, columnsNumber, minesNumber);
+    public void needInitRowsNumber(int rowsNumber) {
+        minesweeper.initRowsNumber(rowsNumber);
+    }
+
+    public void needInitColumnsNumber(int columnsNumber) {
+        minesweeper.initColumnsNumber(columnsNumber);
+    }
+
+    public void needInitMinesNumber(int minesNumber) {
+        minesweeper.initMinesNumber(minesNumber);
+    }
+
+    public void needInitField() {
+        minesweeper.initField();
     }
 
     public void needPrintField() {
@@ -64,7 +73,7 @@ public class Controller {
     }
 
     public void needAddWinner(String name, long time, ArrayList<Winner> winners) throws FileNotFoundException {
-        Minesweeper.addWinner(name, time, winners);
+        minesweeper.addWinner(name, time, winners);
     }
 
     public void needFastOpen(int row, int column) throws OperationNotSupportedException, VictoryException, GameOverException {
@@ -72,6 +81,14 @@ public class Controller {
     }
 
     public ArrayList<Winner> needHighScores() throws FileNotFoundException {
-        return Minesweeper.getWinners();
+        return minesweeper.getWinners();
+    }
+
+    public int needMinesNumber() {
+        return minesweeper.getMinesNumber();
+    }
+
+    public ArrayList<Winner> needHighScores(String level) throws FileNotFoundException {
+        return new HighScores(level).getData();
     }
 }

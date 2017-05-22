@@ -10,5 +10,4 @@ public interface View {
     void addController(Controller controller);
     void printField(Cell[][] cells);
     void printOpenedField(Cell[][] cells);
-    void levelSelection(String[] levels);
 }
