@@ -18,105 +18,116 @@ public class Controller {
         this.view = view;
     }
 
-    public void needInitField(String level) {
+    public void initField(String level) {
         minesweeper.initField(level);
     }
 
-    public void needInitRowsNumber(int rowsNumber) {
+    public void initRowsNumber(int rowsNumber) {
         minesweeper.initRowsNumber(rowsNumber);
     }
 
-    public void needInitColumnsNumber(int columnsNumber) {
+    public void initColumnsNumber(int columnsNumber) {
         minesweeper.initColumnsNumber(columnsNumber);
     }
 
-    public void needInitMinesNumber(int minesNumber) {
+    public void initMinesNumber(int minesNumber) {
         minesweeper.initMinesNumber(minesNumber);
     }
 
-    public void needInitField() {
+    public void initField() {
         minesweeper.initField();
     }
 
-    public void needPrintField() {
+    public void printField() {
         view.printField(minesweeper.getCells());
     }
 
-    public void needPrintOpenedField() {
+    public void printOpenedField() {
         view.printOpenedField(minesweeper.getCells());
     }
 
-    public void needOpenCell(int row, int column) throws OperationNotSupportedException {
+    public boolean openCell(int row, int column) throws OperationNotSupportedException, FileNotFoundException {
         minesweeper.openCell(row, column);
+        if (minesweeper.isGameOver()) {
+            view.printOpenedField(minesweeper.getCells());
+            view.onGameOver();
+            return true;
+        }
+
+        if (minesweeper.isVictory()) {
+            long time = minesweeper.getFinishTime();
+            view.printOpenedField(minesweeper.getCells());
+            view.onVictory(time);
+            return true;
+        }
+
+        return false;
     }
 
-    public void needSetMark(int row, int column) throws OperationNotSupportedException {
+    public void setMark(int row, int column) throws OperationNotSupportedException {
         minesweeper.setMark(row, column);
     }
 
-    public void needDeleteMark(int row, int column) throws OperationNotSupportedException {
+    public void deleteMark(int row, int column) throws OperationNotSupportedException {
         minesweeper.deleteMark(row, column);
     }
 
-    public void needSetQuestion(int row, int column) throws OperationNotSupportedException {
+    public void setQuestion(int row, int column) throws OperationNotSupportedException {
         minesweeper.setQuestion(row, column);
     }
 
-    public void needDeleteQuestion(int row, int column) throws OperationNotSupportedException {
+    public void deleteQuestion(int row, int column) throws OperationNotSupportedException {
         minesweeper.deleteQuestion(row, column);
     }
 
-    public void needAddWinner(String name, long time, ArrayList<Winner> winners) throws FileNotFoundException {
+    private void addWinner(String name, long time, ArrayList<Winner> winners) throws FileNotFoundException {
         minesweeper.addWinner(name, time, winners);
     }
 
-    public void needFastOpen(int row, int column) throws OperationNotSupportedException {
+    public boolean fastOpen(int row, int column) throws OperationNotSupportedException, FileNotFoundException {
         minesweeper.fastOpenNeighbors(row, column);
-    }
-
-    public ArrayList<Winner> needHighScores() throws FileNotFoundException {
-        return minesweeper.getWinners();
-    }
-
-    public int needMinesNumber() {
-        return minesweeper.getMinesNumber();
-    }
-
-    public int needRowsNumber() {
-        return minesweeper.getRowsNumber();
-    }
-
-    public int needColumnsNumber() {
-        return minesweeper.getColumnsNumber();
-    }
-
-    public ArrayList<Winner> needHighScores(String level) throws FileNotFoundException {
-        return new HighScores(level).getData();
-    }
-
-    public boolean needCheckVictory() throws FileNotFoundException {
-        if (minesweeper.isVictory()) {
-            view.onVictory();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean needCheckGameOver() {
         if (minesweeper.isGameOver()) {
             view.onGameOver();
             return true;
-        } else {
-            return false;
         }
+
+        if (minesweeper.isVictory()) {
+            long time = minesweeper.getFinishTime();
+            view.onVictory(time);
+
+            if (!getLevel().equals(Minesweeper.USER)) {
+                ArrayList<Winner> winners = getHighScores();
+                if (winners.isEmpty() || winners.get(winners.size() - 1).getTime() >= time) {
+                    addWinner(view.getWinnerName(), time, winners);
+                }
+            }
+            return true;
+        }
+
+        return false;
     }
 
-    public long needFinishTime() {
-        return minesweeper.getFinishTime();
+    private ArrayList<Winner> getHighScores() throws FileNotFoundException {
+        return minesweeper.getWinners();
     }
 
-    public String needLevel() {
+    public int getMinesNumber() {
+        return minesweeper.getMinesNumber();
+    }
+
+    public int getRowsNumber() {
+        return minesweeper.getRowsNumber();
+    }
+
+    public int getColumnsNumber() {
+        return minesweeper.getColumnsNumber();
+    }
+
+    public ArrayList<Winner> getHighScores(String level) throws FileNotFoundException {
+        return new HighScores(level).getData();
+    }
+
+    private String getLevel() {
         return minesweeper.getLevel();
     }
 }

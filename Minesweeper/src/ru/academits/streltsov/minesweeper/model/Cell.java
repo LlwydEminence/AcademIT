@@ -50,7 +50,7 @@ public class Cell {
         --value;
     }
 
-    boolean isMine() {
+    public boolean isMine() {
         return value == MINE;
     }
 

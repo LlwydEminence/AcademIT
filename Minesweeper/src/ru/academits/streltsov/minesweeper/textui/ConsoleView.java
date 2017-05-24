@@ -3,7 +3,6 @@ package ru.academits.streltsov.minesweeper.textui;
 import ru.academits.streltsov.minesweeper.common.View;
 import ru.academits.streltsov.minesweeper.conroller.Controller;
 import ru.academits.streltsov.minesweeper.model.*;
-
 import javax.naming.OperationNotSupportedException;
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -135,7 +134,7 @@ public class ConsoleView implements View {
 
     private void startNewGame() throws FileNotFoundException {
         selectLevel(Minesweeper.LEVELS);
-        controller.needPrintField();
+        controller.printField();
 
         while (true) {
             System.out.println("1 - открыть ячейку");
@@ -144,7 +143,7 @@ public class ConsoleView implements View {
             switch (choice) {
                 case "1": {
                     try {
-                        controller.needOpenCell(getEnteredRow(), getEnteredColumn());
+                        controller.openCell(getEnteredRow(), getEnteredColumn());
                     } catch (OperationNotSupportedException e) {
                         e.printStackTrace();
                     }
@@ -164,7 +163,7 @@ public class ConsoleView implements View {
         }
 
         while (true) {
-            controller.needPrintField();
+            controller.printField();
             System.out.println("1 - открыть ячейку");
             System.out.println("2 - пометить ячейку");
             System.out.println("3 - снять пометку");
@@ -177,13 +176,7 @@ public class ConsoleView implements View {
             switch (choice) {
                 case "1": {
                     try {
-                        controller.needOpenCell(getEnteredRow(), getEnteredColumn());
-
-                        if (controller.needCheckGameOver()) {
-                            return;
-                        }
-
-                        if (controller.needCheckVictory()) {
+                        if (controller.openCell(getEnteredRow(), getEnteredColumn())) {
                             return;
                         }
 
@@ -196,7 +189,7 @@ public class ConsoleView implements View {
 
                 case "2": {
                     try {
-                        controller.needSetMark(getEnteredRow(), getEnteredColumn());
+                        controller.setMark(getEnteredRow(), getEnteredColumn());
                         break;
                     } catch (OperationNotSupportedException | IllegalArgumentException e) {
                         System.out.println(e.getMessage());
@@ -206,7 +199,7 @@ public class ConsoleView implements View {
 
                 case "3": {
                     try {
-                        controller.needDeleteMark(getEnteredRow(), getEnteredColumn());
+                        controller.deleteMark(getEnteredRow(), getEnteredColumn());
                         break;
                     } catch (OperationNotSupportedException | IllegalArgumentException e) {
                         System.out.println(e.getMessage());
@@ -216,7 +209,7 @@ public class ConsoleView implements View {
 
                 case "4": {
                     try {
-                        controller.needSetQuestion(getEnteredRow(), getEnteredColumn());
+                        controller.setQuestion(getEnteredRow(), getEnteredColumn());
                         break;
                     } catch (OperationNotSupportedException | IllegalArgumentException e) {
                         System.out.println(e.getMessage());
@@ -226,7 +219,7 @@ public class ConsoleView implements View {
 
                 case "5": {
                     try {
-                        controller.needDeleteQuestion(getEnteredRow(), getEnteredColumn());
+                        controller.deleteQuestion(getEnteredRow(), getEnteredColumn());
                         break;
                     } catch (OperationNotSupportedException | IllegalArgumentException e) {
                         System.out.println(e.getMessage());
@@ -236,16 +229,9 @@ public class ConsoleView implements View {
 
                 case "6": {
                     try {
-                        controller.needFastOpen(getEnteredRow(), getEnteredColumn());
-
-                        if (controller.needCheckGameOver()) {
+                        if (controller.fastOpen(getEnteredRow(), getEnteredColumn())) {
                             return;
                         }
-
-                        if (controller.needCheckVictory()) {
-                            return;
-                        }
-
                         break;
                     } catch (OperationNotSupportedException | IllegalArgumentException e) {
                         System.out.println(e.getMessage());
@@ -271,7 +257,7 @@ public class ConsoleView implements View {
             }
 
             System.out.println(level + ":");
-            ArrayList<Winner> winners = controller.needHighScores(level);
+            ArrayList<Winner> winners = controller.getHighScores(level);
             int i = 1;
             for (Winner winner : winners) {
                 System.out.println(i + ". " + winner.getName() + " " + millisecondsToDate(winner.getTime()));
@@ -311,17 +297,17 @@ public class ConsoleView implements View {
             String choice = scanner.next();
             switch (choice) {
                 case "1": {
-                    controller.needInitField(levels[0]);
+                    controller.initField(levels[0]);
                     return;
                 }
 
                 case "2": {
-                    controller.needInitField(levels[1]);
+                    controller.initField(levels[1]);
                     return;
                 }
 
                 case "3": {
-                    controller.needInitField(levels[2]);
+                    controller.initField(levels[2]);
                     return;
                 }
 
@@ -329,7 +315,7 @@ public class ConsoleView implements View {
                     while (true) {
                         try {
                             System.out.println("Введите число строк: ");
-                            controller.needInitRowsNumber(Integer.parseInt(scanner.next()));
+                            controller.initRowsNumber(Integer.parseInt(scanner.next()));
                             break;
                         } catch (NumberFormatException e) {
                             System.out.println("Число строк должно быть положительным целым числом");
@@ -341,7 +327,7 @@ public class ConsoleView implements View {
                     while (true) {
                         try {
                             System.out.println("Введите число столбцов: ");
-                            controller.needInitColumnsNumber(Integer.parseInt(scanner.next()));
+                            controller.initColumnsNumber(Integer.parseInt(scanner.next()));
                             break;
                         } catch (NumberFormatException e) {
                             System.out.println("Число столбцов должно быть положительным целым числом");
@@ -353,7 +339,7 @@ public class ConsoleView implements View {
                     while (true) {
                         try {
                             System.out.println("Введите число мин: ");
-                            controller.needInitMinesNumber(Integer.parseInt(scanner.next()));
+                            controller.initMinesNumber(Integer.parseInt(scanner.next()));
                             break;
                         } catch (NumberFormatException e) {
                             System.out.println("Число мин должно быть положительным целым числом");
@@ -362,7 +348,7 @@ public class ConsoleView implements View {
                         }
                     }
 
-                    controller.needInitField();
+                    controller.initField();
                     break;
                 }
 
@@ -374,24 +360,19 @@ public class ConsoleView implements View {
     }
 
     @Override
-    public void onVictory() throws FileNotFoundException {
+    public void onVictory(long time) throws FileNotFoundException {
         System.out.println("Победа!");
-
-        long time = controller.needFinishTime();
         System.out.println("Ваше время: " + millisecondsToDate(time));
-
-        if (!controller.needLevel().equals(Minesweeper.USER)) {
-            ArrayList<Winner> winners = controller.needHighScores();
-            if (winners.isEmpty() || winners.get(winners.size() - 1).getTime() >= time) {
-                System.out.print("Введите ваше имя: ");
-                controller.needAddWinner(scanner.next(), time, winners);
-            }
-        }
     }
 
     @Override
     public void onGameOver() {
-        controller.needPrintOpenedField();
         System.out.println("Поражение!");
+    }
+
+    @Override
+    public String getWinnerName() {
+        System.out.print("Введите ваше имя: ");
+        return scanner.next();
     }
 }

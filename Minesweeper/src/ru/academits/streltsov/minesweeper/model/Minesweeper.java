@@ -486,7 +486,8 @@ public class Minesweeper {
     }
 
     public long getFinishTime() {
-        return System.currentTimeMillis() - startTime;
+        long finishTime = System.currentTimeMillis();
+        return (finishTime - startTime);
     }
 
     public String getLevel() {

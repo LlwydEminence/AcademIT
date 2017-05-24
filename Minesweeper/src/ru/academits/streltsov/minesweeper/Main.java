@@ -7,7 +7,6 @@ import ru.academits.streltsov.minesweeper.textui.ConsoleView;
 
 import java.io.FileNotFoundException;
 
-
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         View view = new ConsoleView();

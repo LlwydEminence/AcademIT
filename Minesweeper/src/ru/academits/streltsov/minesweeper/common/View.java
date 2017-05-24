@@ -10,6 +10,7 @@ public interface View {
     void addController(Controller controller);
     void printField(Cell[][] cells);
     void printOpenedField(Cell[][] cells);
-    void onVictory() throws FileNotFoundException;
+    void onVictory(long time) throws FileNotFoundException;
     void onGameOver();
+    String getWinnerName();
 }
