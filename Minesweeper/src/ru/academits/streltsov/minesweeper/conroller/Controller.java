@@ -46,8 +46,7 @@ public class Controller {
         view.printOpenedField(minesweeper.getCells());
     }
 
-    public boolean openCell(int row, int column) throws OperationNotSupportedException, FileNotFoundException {
-        minesweeper.openCell(row, column);
+    private boolean checkGameOverAndVictory() throws FileNotFoundException {
         if (minesweeper.isGameOver()) {
             view.printOpenedField(minesweeper.getCells());
             view.onGameOver();
@@ -58,10 +57,23 @@ public class Controller {
             long time = minesweeper.getFinishTime();
             view.printOpenedField(minesweeper.getCells());
             view.onVictory(time);
+
+            if (!getLevel().equals(Minesweeper.USER)) {
+                ArrayList<Winner> winners = getHighScores();
+                if (winners.isEmpty() || winners.get(winners.size() - 1).getTime() >= time) {
+                    addWinner(view.getWinnerName(), time, winners);
+                }
+            }
+
             return true;
         }
 
         return false;
+    }
+
+    public boolean openCell(int row, int column) throws OperationNotSupportedException, FileNotFoundException {
+        minesweeper.openCell(row, column);
+        return checkGameOverAndVictory();
     }
 
     public void setMark(int row, int column) throws OperationNotSupportedException {
@@ -86,25 +98,7 @@ public class Controller {
 
     public boolean fastOpen(int row, int column) throws OperationNotSupportedException, FileNotFoundException {
         minesweeper.fastOpenNeighbors(row, column);
-        if (minesweeper.isGameOver()) {
-            view.onGameOver();
-            return true;
-        }
-
-        if (minesweeper.isVictory()) {
-            long time = minesweeper.getFinishTime();
-            view.onVictory(time);
-
-            if (!getLevel().equals(Minesweeper.USER)) {
-                ArrayList<Winner> winners = getHighScores();
-                if (winners.isEmpty() || winners.get(winners.size() - 1).getTime() >= time) {
-                    addWinner(view.getWinnerName(), time, winners);
-                }
-            }
-            return true;
-        }
-
-        return false;
+        return checkGameOverAndVictory();
     }
 
     private ArrayList<Winner> getHighScores() throws FileNotFoundException {
