@@ -2,9 +2,7 @@ package ru.academits.streltsov.minesweeper.conroller;
 
 import ru.academits.streltsov.minesweeper.common.View;
 import ru.academits.streltsov.minesweeper.model.HighScores;
-import ru.academits.streltsov.minesweeper.model.exceptions.GameOverException;
 import ru.academits.streltsov.minesweeper.model.Minesweeper;
-import ru.academits.streltsov.minesweeper.model.exceptions.VictoryException;
 import ru.academits.streltsov.minesweeper.model.Winner;
 
 import javax.naming.OperationNotSupportedException;
@@ -48,11 +46,7 @@ public class Controller {
         view.printOpenedField(minesweeper.getCells());
     }
 
-    public void needOpenFirstCell(int row, int column)  {
-        minesweeper.openFirstCell(row, column);
-    }
-
-    public void needOpenCell(int row, int column) throws OperationNotSupportedException, VictoryException, GameOverException {
+    public void needOpenCell(int row, int column) throws OperationNotSupportedException {
         minesweeper.openCell(row, column);
     }
 
@@ -76,7 +70,7 @@ public class Controller {
         minesweeper.addWinner(name, time, winners);
     }
 
-    public void needFastOpen(int row, int column) throws OperationNotSupportedException, VictoryException, GameOverException {
+    public void needFastOpen(int row, int column) throws OperationNotSupportedException {
         minesweeper.fastOpenNeighbors(row, column);
     }
 
@@ -88,7 +82,41 @@ public class Controller {
         return minesweeper.getMinesNumber();
     }
 
+    public int needRowsNumber() {
+        return minesweeper.getRowsNumber();
+    }
+
+    public int needColumnsNumber() {
+        return minesweeper.getColumnsNumber();
+    }
+
     public ArrayList<Winner> needHighScores(String level) throws FileNotFoundException {
         return new HighScores(level).getData();
+    }
+
+    public boolean needCheckVictory() throws FileNotFoundException {
+        if (minesweeper.isVictory()) {
+            view.onVictory();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean needCheckGameOver() {
+        if (minesweeper.isGameOver()) {
+            view.onGameOver();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public long needFinishTime() {
+        return minesweeper.getFinishTime();
+    }
+
+    public String needLevel() {
+        return minesweeper.getLevel();
     }
 }

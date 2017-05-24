@@ -2,6 +2,7 @@ package ru.academits.streltsov.minesweeper.model;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class HighScores {
@@ -12,26 +13,17 @@ public class HighScores {
             "Minesweeper/src/ru/academits/streltsov/minesweeper/resources/HighScoresForAmateur.txt";
     private final static String HIGH_SCORES_FOR_EXPERT_FILE_PATH =
             "Minesweeper/src/ru/academits/streltsov/minesweeper/resources/HighScoresForExpert.txt";
-
+    private final static HashMap<String, String> hashMap = new HashMap<>();
     private String filePath;
 
+    static {
+        hashMap.put(Minesweeper.BEGINNER, HIGH_SCORES_FOR_BEGINNER_FILE_PATH);
+        hashMap.put(Minesweeper.AMATEUR, HIGH_SCORES_FOR_AMATEUR_FILE_PATH);
+        hashMap.put(Minesweeper.EXPERT, HIGH_SCORES_FOR_EXPERT_FILE_PATH);
+    }
+
     public HighScores(String level) {
-        switch (level) {
-            case Minesweeper.BEGINNER: {
-                filePath = HIGH_SCORES_FOR_BEGINNER_FILE_PATH;
-                break;
-            }
-
-            case Minesweeper.AMATEUR: {
-                filePath = HIGH_SCORES_FOR_AMATEUR_FILE_PATH;
-                break;
-            }
-
-            case Minesweeper.EXPERT: {
-                filePath = HIGH_SCORES_FOR_EXPERT_FILE_PATH;
-                break;
-            }
-        }
+        filePath = hashMap.get(level);
     }
 
     void add(String name, long time, ArrayList<Winner> winners) throws FileNotFoundException {
@@ -43,13 +35,7 @@ public class HighScores {
         winners.sort((o1, o2) -> {
             long o1Time = o1.getTime();
             long o2Time = o2.getTime();
-            if (o1Time == o2Time) {
-                return 0;
-            } else if (o1Time < o2Time) {
-                return -1;
-            } else {
-                return 1;
-            }
+            return Long.compare(o1Time, o2Time);
         });
 
         try (PrintWriter printWriter =

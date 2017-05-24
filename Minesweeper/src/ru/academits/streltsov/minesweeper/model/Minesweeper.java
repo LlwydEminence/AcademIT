@@ -1,8 +1,5 @@
 package ru.academits.streltsov.minesweeper.model;
 
-import ru.academits.streltsov.minesweeper.model.exceptions.GameOverException;
-import ru.academits.streltsov.minesweeper.model.exceptions.VictoryException;
-
 import javax.naming.OperationNotSupportedException;
 import java.io.*;
 import java.util.*;
@@ -36,6 +33,7 @@ public class Minesweeper {
     private static final String DECREASE_OPERATION = "-";
     private static final Random r = new Random(System.currentTimeMillis());
 
+    private String level;
     private int rowsNumber;
     private int columnsNumber;
     private int minesNumber;
@@ -44,11 +42,15 @@ public class Minesweeper {
     private int marksNumber;
     private Cell[][] cells;
     private HighScores highScores;
+    private boolean isFirstCellOpened = false;
+    private boolean isMineOpened = false;
+    private long startTime;
 
     public Minesweeper() {
     }
 
     public void initField(String level) {
+        this.level = level;
         switch (level) {
             case BEGINNER: {
                 initParameters(ROWS_NUMBER_FOR_BEGINNER, COLUMNS_NUMBER_FOR_BEGINNER, MINES_NUMBER_FOR_BEGINNER);
@@ -70,10 +72,6 @@ public class Minesweeper {
         }
 
         highScores = new HighScores(level);
-    }
-
-    public int getMinesNumber() {
-        return minesNumber;
     }
 
     public void initRowsNumber(int rowsNumber) {
@@ -105,7 +103,20 @@ public class Minesweeper {
         }
     }
 
+    public int getMinesNumber() {
+        return minesNumber;
+    }
+
+    public int getColumnsNumber() {
+        return columnsNumber;
+    }
+
+    public int getRowsNumber() {
+        return rowsNumber;
+    }
+
     public void initField() {
+        level = USER;
         initParameters();
         fillCells();
     }
@@ -275,7 +286,7 @@ public class Minesweeper {
         }
     }
 
-    public void openFirstCell(int row, int column) {
+    private void openFirstCell(int row, int column) {
         --row;
         --column;
         checkCoordinates(row, column);
@@ -310,6 +321,7 @@ public class Minesweeper {
                 }
             }
             cells[row][column].open();
+            startTime = System.currentTimeMillis();
             ++openCellsNumber;
             if (cells[row][column].isNoMineNear()) {
                 openNeighbors(row, column);
@@ -317,7 +329,13 @@ public class Minesweeper {
         }
     }
 
-    public void openCell(int row, int column) throws GameOverException, OperationNotSupportedException, VictoryException {
+    public void openCell(int row, int column) throws OperationNotSupportedException {
+        if (!isFirstCellOpened) {
+            openFirstCell(row, column);
+            isFirstCellOpened = true;
+            return;
+        }
+
         --row;
         --column;
         checkCoordinates(row, column);
@@ -330,19 +348,16 @@ public class Minesweeper {
             throw new OperationNotSupportedException("Нельзя открыть помеченную ячейку.");
         }
 
+        if (cells[row][column].isMine()) {
+            isMineOpened = true;
+            return;
+        }
+
         cells[row][column].open();
         ++openCellsNumber;
 
-        if (cells[row][column].isMine()) {
-            throw new GameOverException("Вы проиграли!");
-        }
-
         if (cells[row][column].isNoMineNear()) {
             openNeighbors(row, column);
-        }
-
-        if (openCellsNumber >= cellsWithoutMineNumber) {
-            throw new VictoryException("Победа!");
         }
     }
 
@@ -424,7 +439,7 @@ public class Minesweeper {
         return highScores.getData();
     }
 
-    public void fastOpenNeighbors(int row, int column) throws OperationNotSupportedException, VictoryException, GameOverException {
+    public void fastOpenNeighbors(int row, int column) throws OperationNotSupportedException {
         --row;
         --column;
         checkCoordinates(row, column);
@@ -457,16 +472,24 @@ public class Minesweeper {
                 if (isExist(i, j) && !cells[i][j].isMarked() && !cells[i][j].isQuestioned() && !cells[i][j].isOpened()) {
                     cells[i][j].open();
                     ++openCellsNumber;
-
-                    if (openCellsNumber == cellsWithoutMineNumber) {
-                        throw new VictoryException("Победа!");
-                    }
-
-                    if (cells[i][j].isMine()) {
-                        throw new GameOverException("Вы проиграли");
-                    }
                 }
             }
         }
+    }
+
+    public boolean isGameOver() {
+        return isMineOpened;
+    }
+
+    public boolean isVictory() {
+        return openCellsNumber == cellsWithoutMineNumber;
+    }
+
+    public long getFinishTime() {
+        return System.currentTimeMillis() - startTime;
+    }
+
+    public String getLevel() {
+        return level;
     }
 }

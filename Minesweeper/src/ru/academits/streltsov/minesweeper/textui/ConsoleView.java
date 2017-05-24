@@ -3,8 +3,6 @@ package ru.academits.streltsov.minesweeper.textui;
 import ru.academits.streltsov.minesweeper.common.View;
 import ru.academits.streltsov.minesweeper.conroller.Controller;
 import ru.academits.streltsov.minesweeper.model.*;
-import ru.academits.streltsov.minesweeper.model.exceptions.GameOverException;
-import ru.academits.streltsov.minesweeper.model.exceptions.VictoryException;
 
 import javax.naming.OperationNotSupportedException;
 import java.io.FileNotFoundException;
@@ -139,16 +137,17 @@ public class ConsoleView implements View {
         selectLevel(Minesweeper.LEVELS);
         controller.needPrintField();
 
-        long start;
-        long finish;
         while (true) {
             System.out.println("1 - открыть ячейку");
             System.out.println("0 - закончить игру");
             String choice = scanner.next();
             switch (choice) {
                 case "1": {
-                    controller.needOpenFirstCell(getEnteredRow(), getEnteredColumn());
-                    start = System.currentTimeMillis();
+                    try {
+                        controller.needOpenCell(getEnteredRow(), getEnteredColumn());
+                    } catch (OperationNotSupportedException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 }
 
@@ -179,21 +178,19 @@ public class ConsoleView implements View {
                 case "1": {
                     try {
                         controller.needOpenCell(getEnteredRow(), getEnteredColumn());
+
+                        if (controller.needCheckGameOver()) {
+                            return;
+                        }
+
+                        if (controller.needCheckVictory()) {
+                            return;
+                        }
+
                         break;
                     } catch (OperationNotSupportedException | IllegalArgumentException e) {
                         System.out.println(e.getMessage());
                         continue;
-                    } catch (GameOverException e) {
-                        System.out.println(e.getMessage());
-                        controller.needPrintOpenedField();
-                        return;
-                    } catch (VictoryException e) {
-                        finish = System.currentTimeMillis();
-                        long time = finish - start;
-
-                        System.out.println(e.getMessage());
-                        catchVictory(time);
-                        return;
                     }
                 }
 
@@ -240,22 +237,19 @@ public class ConsoleView implements View {
                 case "6": {
                     try {
                         controller.needFastOpen(getEnteredRow(), getEnteredColumn());
+
+                        if (controller.needCheckGameOver()) {
+                            return;
+                        }
+
+                        if (controller.needCheckVictory()) {
+                            return;
+                        }
+
                         break;
                     } catch (OperationNotSupportedException | IllegalArgumentException e) {
                         System.out.println(e.getMessage());
                         continue;
-                    } catch (VictoryException e) {
-                        finish = System.currentTimeMillis();
-                        long time = finish - start;
-
-                        System.out.println(e.getMessage());
-                        controller.needPrintField();
-                        catchVictory(time);
-                        return;
-                    } catch (GameOverException e) {
-                        System.out.println(e.getMessage());
-                        controller.needPrintOpenedField();
-                        return;
                     }
                 }
 
@@ -267,16 +261,6 @@ public class ConsoleView implements View {
                     System.out.println("Неверный ввод.");
                 }
             }
-        }
-    }
-
-    private void catchVictory(long time) throws FileNotFoundException {
-        System.out.println("Ваше время: " + millisecondsToDate(time));
-
-        ArrayList<Winner> winners = controller.needHighScores();
-        if (winners.isEmpty() || winners.get(winners.size() - 1).getTime() >= time) {
-            System.out.print("Введите ваше имя: ");
-            controller.needAddWinner(scanner.next(), time, winners);
         }
     }
 
@@ -387,5 +371,27 @@ public class ConsoleView implements View {
                 }
             }
         }
+    }
+
+    @Override
+    public void onVictory() throws FileNotFoundException {
+        System.out.println("Победа!");
+
+        long time = controller.needFinishTime();
+        System.out.println("Ваше время: " + millisecondsToDate(time));
+
+        if (!controller.needLevel().equals(Minesweeper.USER)) {
+            ArrayList<Winner> winners = controller.needHighScores();
+            if (winners.isEmpty() || winners.get(winners.size() - 1).getTime() >= time) {
+                System.out.print("Введите ваше имя: ");
+                controller.needAddWinner(scanner.next(), time, winners);
+            }
+        }
+    }
+
+    @Override
+    public void onGameOver() {
+        controller.needPrintOpenedField();
+        System.out.println("Поражение!");
     }
 }
