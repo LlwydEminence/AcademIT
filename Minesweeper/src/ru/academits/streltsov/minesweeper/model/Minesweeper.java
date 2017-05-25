@@ -19,15 +19,15 @@ public class Minesweeper {
     private static final int COLUMNS_NUMBER_FOR_AMATEUR = 16;
     private static final int MINES_NUMBER_FOR_AMATEUR = 40;
 
-    private static final int ROWS_NUMBER_FOR_EXPERT = 30;
-    private static final int COLUMNS_NUMBER_FOR_EXPERT = 16;
+    private static final int ROWS_NUMBER_FOR_EXPERT = 16;
+    private static final int COLUMNS_NUMBER_FOR_EXPERT = 30;
     private static final int MINES_NUMBER_FOR_EXPERT = 99;
 
-    private static final int MIN_ROWS_NUMBER = 9;
-    private static final int MAX_ROWS_NUMBER = 30;
-    private static final int MIN_COLUMNS_NUMBER = 9;
-    private static final int MAX_COLUMNS_NUMBER = 24;
-    private static final int MIN_MINES_NUMBER = 10;
+    public static final int MIN_ROWS_NUMBER = 9;
+    public static final int MAX_ROWS_NUMBER = 24;
+    public static final int MIN_COLUMNS_NUMBER = 9;
+    public static final int MAX_COLUMNS_NUMBER = 30;
+    public static final int MIN_MINES_NUMBER = 10;
 
     private static final String INCREASE_OPERATION = "+";
     private static final String DECREASE_OPERATION = "-";
@@ -101,18 +101,12 @@ public class Minesweeper {
         if (minesNumber > maxMinesNumber) {
             throw new IllegalArgumentException("Максимальное число мин при таких размерах - " + maxMinesNumber);
         }
+
+        this.minesNumber = minesNumber;
     }
 
     public int getMinesNumber() {
         return minesNumber;
-    }
-
-    public int getColumnsNumber() {
-        return columnsNumber;
-    }
-
-    public int getRowsNumber() {
-        return rowsNumber;
     }
 
     public void initField() {
@@ -350,6 +344,7 @@ public class Minesweeper {
 
         if (cells[row][column].isMine()) {
             isMineOpened = true;
+            cells[row][column].open();
             return;
         }
 
@@ -485,12 +480,20 @@ public class Minesweeper {
         return openCellsNumber == cellsWithoutMineNumber;
     }
 
-    public long getFinishTime() {
-        long finishTime = System.currentTimeMillis();
-        return (finishTime - startTime);
+    public long getTime() {
+        long time = System.currentTimeMillis();
+        return (time - startTime);
     }
 
     public String getLevel() {
         return level;
+    }
+
+    public boolean isFirstCellOpened() {
+        return isFirstCellOpened;
+    }
+
+    public int getMaxMinesNumber() {
+        return (rowsNumber - 1) * (columnsNumber - 1);
     }
 }

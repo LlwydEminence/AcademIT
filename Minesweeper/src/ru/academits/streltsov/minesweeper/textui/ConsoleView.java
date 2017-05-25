@@ -349,7 +349,7 @@ public class ConsoleView implements View {
                     }
 
                     controller.initField();
-                    break;
+                    return;
                 }
 
                 default: {
@@ -374,5 +374,9 @@ public class ConsoleView implements View {
     public String getWinnerName() {
         System.out.print("Введите ваше имя: ");
         return scanner.next();
+    }
+
+    @Override
+    public void updateTimer(long time) {
     }
 }

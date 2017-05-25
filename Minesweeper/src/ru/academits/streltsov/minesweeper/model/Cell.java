@@ -54,7 +54,7 @@ public class Cell {
         return value == MINE;
     }
 
-    boolean isNoMineNear() {
+    public boolean isNoMineNear() {
         return value == 0;
     }
 

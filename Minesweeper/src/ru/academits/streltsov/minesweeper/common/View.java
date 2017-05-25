@@ -13,4 +13,5 @@ public interface View {
     void onVictory(long time) throws FileNotFoundException;
     void onGameOver();
     String getWinnerName();
+    void updateTimer(long time);
 }

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class HighScores {
-    private static final int HIGH_SCORES_POSITION_NUMBERS = 10;
+    public static final int HIGH_SCORES_POSITION_NUMBERS = 10;
     private final static String HIGH_SCORES_FOR_BEGINNER_FILE_PATH =
             "Minesweeper/src/ru/academits/streltsov/minesweeper/resources/HighScoresForBeginner.txt";
     private final static String HIGH_SCORES_FOR_AMATEUR_FILE_PATH =
