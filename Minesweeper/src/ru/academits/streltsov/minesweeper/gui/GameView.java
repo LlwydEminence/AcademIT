@@ -24,7 +24,7 @@ public class GameView extends JFrame implements View {
             new ImageIcon("Minesweeper/src/ru/academits/streltsov/minesweeper/resources/wrongflag.png");
     private static final ImageIcon QUESTION =
             new ImageIcon("Minesweeper/src/ru/academits/streltsov/minesweeper/resources/question.png");
-    private static final Dimension CELL_SIZE = new Dimension( FLAG.getIconWidth(),  FLAG.getIconHeight());
+    private static final Dimension CELL_SIZE = new Dimension(FLAG.getIconWidth(), FLAG.getIconHeight());
 
     private final ChoiceFrame choiceFrame;
     private final JPanel fieldPanel = new JPanel(new GridBagLayout());
@@ -89,7 +89,7 @@ public class GameView extends JFrame implements View {
 
         JPanel flagPanel = new JPanel(new GridBagLayout());
         flagPanel.add(new Label("Флаги:"),
-                new GBC(0,0).setAnchor(GBC.EAST));
+                new GBC(0, 0).setAnchor(GBC.EAST));
 
         flagCount = controller.getMinesNumber();
         flagLabel = new JLabel(String.valueOf(flagCount));
@@ -100,7 +100,7 @@ public class GameView extends JFrame implements View {
         timeLabel = new JLabel(millisecondsToDate(0));
         timePanel.add(timeLabel);
 
-        JPanel informationPanel = new JPanel(new GridLayout(0,2));
+        JPanel informationPanel = new JPanel(new GridLayout(0, 2));
         informationPanel.add(flagPanel);
         informationPanel.add(timePanel);
 
@@ -112,7 +112,7 @@ public class GameView extends JFrame implements View {
 
     private void initFrame() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setLocation(500,220);
+        setLocation(500, 220);
         setResizable(false);
         setTitle("Сапер");
         pack();
@@ -127,26 +127,12 @@ public class GameView extends JFrame implements View {
     public void printField(Cell[][] cells) {
         for (int i = 0; i < cells.length; ++i) {
             for (int j = 0; j < cells[0].length; ++j) {
-                CellButton button = new CellButton(i,j);
+                CellButton button = new CellButton(i, j);
                 button.setPreferredSize(CELL_SIZE);
                 Cell cell = cells[i][j];
 
                 if (!cell.isOpened()) {
                     if (!cell.isMarked() && !cell.isQuestioned()) {
-                        button.addActionListener(e -> {
-                            try {
-                                if (controller.openCell(button.getRow(), button.getColumn())) {
-                                    return;
-                                }
-                                fieldPanel.removeAll();
-                                controller.printField();
-                            } catch (OperationNotSupportedException ex) {
-                                controller.printField();
-                            } catch (FileNotFoundException e1) {
-                                e1.printStackTrace();
-                            }
-                        });
-
                         button.addMouseListener(new MouseAdapter() {
                             @Override
                             public void mousePressed(MouseEvent e) {
@@ -159,6 +145,18 @@ public class GameView extends JFrame implements View {
                                         controller.printField();
                                     } catch (OperationNotSupportedException e1) {
                                         controller.printField();
+                                    }
+                                } else if ((e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) != 0) {
+                                    try {
+                                        if (controller.openCell(button.getRow(), button.getColumn())) {
+                                            return;
+                                        }
+                                        fieldPanel.removeAll();
+                                        controller.printField();
+                                    } catch (OperationNotSupportedException ex) {
+                                        controller.printField();
+                                    } catch (FileNotFoundException e1) {
+                                        e1.printStackTrace();
                                     }
                                 }
                             }
@@ -202,7 +200,7 @@ public class GameView extends JFrame implements View {
                 } else {
                     if (!cell.isNoMineNear()) {
                         button.setIcon(new ImageIcon("Minesweeper/src/ru/academits/streltsov/minesweeper/resources/" +
-                                cell.getValue() +".png"));
+                                cell.getValue() + ".png"));
                     } else {
                         button.setText(null);
                         button.setEnabled(false);
@@ -211,7 +209,9 @@ public class GameView extends JFrame implements View {
                     button.addMouseListener(new MouseAdapter() {
                         @Override
                         public void mousePressed(MouseEvent e) {
-                            if ((e.getModifiersEx() & InputEvent.BUTTON2_DOWN_MASK) !=0) {
+                            if ((e.getModifiersEx() & InputEvent.BUTTON2_DOWN_MASK) != 0 ||
+                                    (((e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) != 0) &&
+                                            ((e.getModifiersEx() & InputEvent.BUTTON3_DOWN_MASK) != 0))) {
                                 try {
                                     if (controller.fastOpen(button.getRow(), button.getColumn())) {
                                         return;
@@ -228,7 +228,7 @@ public class GameView extends JFrame implements View {
                     });
                 }
 
-                fieldPanel.add(button, new GBC(j,i));
+                fieldPanel.add(button, new GBC(j, i));
             }
         }
         Container contentPane = getContentPane();
@@ -258,19 +258,34 @@ public class GameView extends JFrame implements View {
                 } else {
                     if (!cell.isNoMineNear()) {
                         button.setIcon(new ImageIcon("Minesweeper/src/ru/academits/streltsov/minesweeper/resources/" +
-                                cell.getValue() +".png"));
+                                cell.getValue() + ".png"));
                     } else {
                         button.setText(null);
                         button.setEnabled(false);
                     }
                 }
 
-                fieldPanel.add(button, new GBC(j,i));
+                fieldPanel.add(button, new GBC(j, i));
             }
         }
         Container contentPane = getContentPane();
         contentPane.repaint();
         contentPane.revalidate();
+    }
+
+    @Override
+    public void showHighScores(String level) throws FileNotFoundException {
+        StringBuilder stringBuilder = new StringBuilder();
+        ArrayList<Winner> winners = controller.getHighScores(level);
+        int i = 1;
+        for (Winner winner : winners) {
+            String string = i + ". " + winner.getName() + " " + millisecondsToDate(winner.getTime());
+            stringBuilder.append(string);
+            stringBuilder.append(System.lineSeparator());
+            ++i;
+        }
+        JOptionPane.showMessageDialog(null, stringBuilder.toString(),
+                level, JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void showHighScores() throws FileNotFoundException {

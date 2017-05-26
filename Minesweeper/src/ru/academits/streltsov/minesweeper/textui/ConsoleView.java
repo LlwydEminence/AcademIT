@@ -379,4 +379,9 @@ public class ConsoleView implements View {
     @Override
     public void updateTimer(long time) {
     }
+
+    @Override
+    public void showHighScores(String level) throws FileNotFoundException {
+
+    }
 }

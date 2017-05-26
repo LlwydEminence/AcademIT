@@ -68,6 +68,7 @@ public class Controller {
                 if (winners.isEmpty() || winners.get(winners.size() - 1).getTime() >= time
                         || winners.size() < HighScores.HIGH_SCORES_POSITION_NUMBERS) {
                     addWinner(view.getWinnerName(), time, winners);
+                    view.showHighScores(minesweeper.getLevel());
                 }
             }
 

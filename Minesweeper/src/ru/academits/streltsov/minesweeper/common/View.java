@@ -14,4 +14,5 @@ public interface View {
     void onGameOver();
     String getWinnerName();
     void updateTimer(long time);
+    void showHighScores(String level) throws FileNotFoundException;
 }

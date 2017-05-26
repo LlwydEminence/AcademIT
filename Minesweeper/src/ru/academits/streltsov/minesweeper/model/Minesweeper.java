@@ -285,6 +285,7 @@ public class Minesweeper {
         --column;
         checkCoordinates(row, column);
 
+        startTime = System.currentTimeMillis();
         if (!cells[row][column].isMine()) {
             cells[row][column].open();
             ++openCellsNumber;
@@ -315,7 +316,6 @@ public class Minesweeper {
                 }
             }
             cells[row][column].open();
-            startTime = System.currentTimeMillis();
             ++openCellsNumber;
             if (cells[row][column].isNoMineNear()) {
                 openNeighbors(row, column);
@@ -465,8 +465,18 @@ public class Minesweeper {
                     continue;
                 }
                 if (isExist(i, j) && !cells[i][j].isMarked() && !cells[i][j].isQuestioned() && !cells[i][j].isOpened()) {
+                    if (cells[i][j].isMine()) {
+                        isMineOpened = true;
+                        cells[i][j].open();
+                        return;
+                    }
+
                     cells[i][j].open();
                     ++openCellsNumber;
+
+                    if (cells[i][j].isNoMineNear()) {
+                        openNeighbors(i, j);
+                    }
                 }
             }
         }
