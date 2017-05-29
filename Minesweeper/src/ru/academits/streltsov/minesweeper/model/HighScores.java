@@ -7,12 +7,10 @@ import java.util.Scanner;
 
 public class HighScores {
     public static final int HIGH_SCORES_POSITION_NUMBERS = 10;
-    private final static String HIGH_SCORES_FOR_BEGINNER_FILE_PATH =
-            "Minesweeper/src/ru/academits/streltsov/minesweeper/resources/HighScoresForBeginner.txt";
-    private final static String HIGH_SCORES_FOR_AMATEUR_FILE_PATH =
-            "Minesweeper/src/ru/academits/streltsov/minesweeper/resources/HighScoresForAmateur.txt";
-    private final static String HIGH_SCORES_FOR_EXPERT_FILE_PATH =
-            "Minesweeper/src/ru/academits/streltsov/minesweeper/resources/HighScoresForExpert.txt";
+    public static final String RESOURCES_PATH = "Minesweeper/src/ru/academits/streltsov/minesweeper/resources";
+    private final static String HIGH_SCORES_FOR_BEGINNER_FILE_PATH = RESOURCES_PATH + "/HighScoresForBeginner.txt";
+    private final static String HIGH_SCORES_FOR_AMATEUR_FILE_PATH = RESOURCES_PATH + "/HighScoresForAmateur.txt";
+    private final static String HIGH_SCORES_FOR_EXPERT_FILE_PATH = RESOURCES_PATH + "/HighScoresForExpert.txt";
     private final static HashMap<String, String> hashMap = new HashMap<>();
     private String filePath;
 

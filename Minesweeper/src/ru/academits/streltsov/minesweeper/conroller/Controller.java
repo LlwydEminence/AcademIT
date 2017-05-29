@@ -20,25 +20,19 @@ public class Controller {
     }
 
     private Timer timer = new Timer(1000, e -> updateTimer());
+    private long timeBeforeStop;
 
     public void initField(String level) {
         minesweeper.initField(level);
     }
 
-    public void initRowsNumber(int rowsNumber) {
-        minesweeper.initRowsNumber(rowsNumber);
+    public void clearAll() {
+        stopTimer();
+        minesweeper.clearAll();
     }
 
-    public void initColumnsNumber(int columnsNumber) {
-        minesweeper.initColumnsNumber(columnsNumber);
-    }
-
-    public void initMinesNumber(int minesNumber) {
-        minesweeper.initMinesNumber(minesNumber);
-    }
-
-    public void initField() {
-        minesweeper.initField();
+    public void initField(int rowsNumber, int columnsNumber, int minesNumber) {
+        minesweeper.initField(rowsNumber, columnsNumber, minesNumber);
     }
 
     public void printField() {
@@ -51,14 +45,14 @@ public class Controller {
 
     private boolean checkGameOverAndVictory() throws FileNotFoundException {
         if (minesweeper.isGameOver()) {
-            timer.stop();
+            stopTimer();
             view.printOpenedField(minesweeper.getCells());
             view.onGameOver();
             return true;
         }
 
         if (minesweeper.isVictory()) {
-            timer.stop();
+            stopTimer();
             long time = minesweeper.getTime();
             view.printOpenedField(minesweeper.getCells());
             view.onVictory(time);
@@ -80,7 +74,7 @@ public class Controller {
 
     public boolean openCell(int row, int column) throws OperationNotSupportedException, FileNotFoundException {
         if (!minesweeper.isFirstCellOpened()) {
-            timer.start();
+            startTimer();
         }
 
         minesweeper.openCell(row, column);
@@ -133,7 +127,20 @@ public class Controller {
         view.updateTimer(time);
     }
 
-    public int getMaxMinesNumber() {
-       return minesweeper.getMaxMinesNumber();
+    public int getMaxMinesNumber(int rowsNumber, int columnsNumber) {
+       return minesweeper.getMaxMinesNumber(rowsNumber, columnsNumber);
+    }
+
+    public void stopTimer() {
+        timeBeforeStop = minesweeper.getTime() / 1000 * 1000;
+        timer.stop();
+    }
+
+    public void startTimer() {
+        timer.start();
+    }
+
+    public void renewStartTime() {
+        minesweeper.renewStartTime(timeBeforeStop);
     }
 }

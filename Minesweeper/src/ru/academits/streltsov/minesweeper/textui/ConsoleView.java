@@ -312,10 +312,13 @@ public class ConsoleView implements View {
                 }
 
                 case "4": {
+                    int rowsNumber;
+                    int columnsNumber;
+                    int minesNumber;
                     while (true) {
                         try {
                             System.out.println("Введите число строк: ");
-                            controller.initRowsNumber(Integer.parseInt(scanner.next()));
+                            rowsNumber = Integer.parseInt(scanner.next());
                             break;
                         } catch (NumberFormatException e) {
                             System.out.println("Число строк должно быть положительным целым числом");
@@ -327,7 +330,7 @@ public class ConsoleView implements View {
                     while (true) {
                         try {
                             System.out.println("Введите число столбцов: ");
-                            controller.initColumnsNumber(Integer.parseInt(scanner.next()));
+                            columnsNumber = Integer.parseInt(scanner.next());
                             break;
                         } catch (NumberFormatException e) {
                             System.out.println("Число столбцов должно быть положительным целым числом");
@@ -339,7 +342,7 @@ public class ConsoleView implements View {
                     while (true) {
                         try {
                             System.out.println("Введите число мин: ");
-                            controller.initMinesNumber(Integer.parseInt(scanner.next()));
+                            minesNumber = Integer.parseInt(scanner.next());
                             break;
                         } catch (NumberFormatException e) {
                             System.out.println("Число мин должно быть положительным целым числом");
@@ -348,7 +351,7 @@ public class ConsoleView implements View {
                         }
                     }
 
-                    controller.initField();
+                    controller.initField(rowsNumber, columnsNumber, minesNumber);
                     return;
                 }
 

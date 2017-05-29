@@ -5,9 +5,9 @@ import java.io.*;
 import java.util.*;
 
 public class Minesweeper {
-    static final String BEGINNER = "Новичок";
-    static final String AMATEUR = "Любитель";
-    static final String EXPERT = "Эксперт";
+    public static final String BEGINNER = "Новичок";
+    public static final String AMATEUR = "Любитель";
+    public static final String EXPERT = "Эксперт";
     public static final String USER = "Пользовательский";
     public static final String[] LEVELS = new String[]{BEGINNER, AMATEUR, EXPERT, USER};
 
@@ -74,44 +74,13 @@ public class Minesweeper {
         highScores = new HighScores(level);
     }
 
-    public void initRowsNumber(int rowsNumber) {
-        if (rowsNumber < MIN_ROWS_NUMBER || rowsNumber > MAX_ROWS_NUMBER) {
-            throw new IllegalArgumentException("Число строк должно быть не менее " + MIN_ROWS_NUMBER +
-                    " и не более " + MAX_ROWS_NUMBER);
-        }
-
-        this.rowsNumber = rowsNumber;
-    }
-
-    public void initColumnsNumber(int columnsNumber) {
-        if (columnsNumber < MIN_COLUMNS_NUMBER || columnsNumber > MAX_COLUMNS_NUMBER) {
-            throw new IllegalArgumentException("Число столбцов должно быть не менее " + MIN_COLUMNS_NUMBER +
-                    "и не более " + MAX_COLUMNS_NUMBER);
-        }
-
-        this.columnsNumber = columnsNumber;
-    }
-
-    public void initMinesNumber(int minesNumber) {
-        if (minesNumber < MIN_MINES_NUMBER) {
-            throw new IllegalArgumentException("Минимальное число мин - " + MIN_MINES_NUMBER);
-        }
-
-        int maxMinesNumber = (rowsNumber - 1) * (columnsNumber - 1);
-        if (minesNumber > maxMinesNumber) {
-            throw new IllegalArgumentException("Максимальное число мин при таких размерах - " + maxMinesNumber);
-        }
-
-        this.minesNumber = minesNumber;
-    }
-
     public int getMinesNumber() {
         return minesNumber;
     }
 
-    public void initField() {
+    public void initField(int rowsNumber, int columnsNumber, int minesNumber) {
         level = USER;
-        initParameters();
+        initParameters(rowsNumber, columnsNumber, minesNumber);
         fillCells();
     }
 
@@ -119,17 +88,6 @@ public class Minesweeper {
         this.rowsNumber = rowsNumber;
         this.columnsNumber = columnsNumber;
         this.minesNumber = minesNumber;
-        cellsWithoutMineNumber = rowsNumber * columnsNumber - minesNumber;
-        openCellsNumber = 0;
-        cells = new Cell[rowsNumber][columnsNumber];
-        for (int i = 0; i < rowsNumber; ++i) {
-            for (int j = 0; j < columnsNumber; ++j) {
-                cells[i][j] = new Cell();
-            }
-        }
-    }
-
-    private void initParameters() {
         cellsWithoutMineNumber = rowsNumber * columnsNumber - minesNumber;
         openCellsNumber = 0;
         cells = new Cell[rowsNumber][columnsNumber];
@@ -503,7 +461,26 @@ public class Minesweeper {
         return isFirstCellOpened;
     }
 
-    public int getMaxMinesNumber() {
+    public int getMaxMinesNumber(int rowsNumber, int columnsNumber) {
         return (rowsNumber - 1) * (columnsNumber - 1);
+    }
+
+    public void clearAll() {
+        level = null;
+        rowsNumber = 0;
+        columnsNumber = 0;
+        minesNumber = 0;
+        openCellsNumber = 0;
+        cellsWithoutMineNumber = 0;
+        marksNumber = 0;
+        cells = null;
+        highScores = null;
+        isFirstCellOpened = false;
+        isMineOpened = false;
+        startTime = 0;
+    }
+
+    public void renewStartTime(long time) {
+        startTime = System.currentTimeMillis() - time;
     }
 }

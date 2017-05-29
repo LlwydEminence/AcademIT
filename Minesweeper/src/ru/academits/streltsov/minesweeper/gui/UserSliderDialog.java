@@ -1,14 +1,12 @@
 package ru.academits.streltsov.minesweeper.gui;
 
-import ru.academits.streltsov.minesweeper.common.View;
 import ru.academits.streltsov.minesweeper.conroller.Controller;
 import ru.academits.streltsov.minesweeper.model.Minesweeper;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.FileNotFoundException;
 
-class UserSliderFrame extends JFrame {
+class UserSliderDialog extends JDialog {
     private JPanel sliderPanel;
     private JLabel widthLabel = new JLabel();
     private JLabel heightLabel = new JLabel();
@@ -18,10 +16,15 @@ class UserSliderFrame extends JFrame {
     private Dimension preferredSizeForLabel =
             new JLabel(Integer.toString(100)).getPreferredSize();
 
-    UserSliderFrame(ChoiceFrame choiceFrame) {
-        Minesweeper minesweeper = new Minesweeper();
-        View gameView = new GameView(choiceFrame);
-        controller = new Controller(minesweeper, gameView);
+    private int rowsNumber;
+    private int columnsNumber;
+    private int minesNumber;
+    private boolean isFieldCreated;
+
+    UserSliderDialog(GameView gameView) {
+        super(gameView, "Настройка пользовательских параметров", true);
+        controller = gameView.getController();
+        controller.stopTimer();
 
         sliderPanel = new JPanel(new GridBagLayout());
         addWidthSlider();
@@ -30,20 +33,14 @@ class UserSliderFrame extends JFrame {
         JButton button = new JButton("Создать поле");
         button.addActionListener(e -> {
             setVisible(false);
-            controller.initField();
-            gameView.addController(controller);
-            try {
-                gameView.startApplication();
-            } catch (FileNotFoundException e1) {
-                e1.printStackTrace();
-            }
+            controller.clearAll();
+            controller.initField(rowsNumber, columnsNumber, minesNumber);
+            isFieldCreated = true;
         });
         add(sliderPanel, BorderLayout.CENTER);
         add(button, BorderLayout.SOUTH);
+        setLocationRelativeTo(gameView);
         pack();
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setVisible(true);
     }
 
     private void addWidthSlider() {
@@ -52,17 +49,16 @@ class UserSliderFrame extends JFrame {
 
         widthLabel.setText(Integer.toString(Minesweeper.MIN_COLUMNS_NUMBER));
         widthLabel.setPreferredSize(preferredSizeForLabel);
-        controller.initColumnsNumber(Minesweeper.MIN_COLUMNS_NUMBER);
+        columnsNumber = Minesweeper.MIN_COLUMNS_NUMBER;
 
         slider.addChangeListener(e -> {
-            int columnsNumber = slider.getValue();
+            columnsNumber = slider.getValue();
             widthLabel.setText(Integer.toString(columnsNumber));
-            controller.initColumnsNumber(columnsNumber);
-            int maxMinesNumber = controller.getMaxMinesNumber();
+            int maxMinesNumber = controller.getMaxMinesNumber(rowsNumber, columnsNumber);
 
             if (maxMinesNumber < minesNumberSlider.getValue()) {
                 minesNumberSlider.setValue(maxMinesNumber);
-                controller.initMinesNumber(maxMinesNumber);
+                minesNumber = maxMinesNumber;
                 minesNumberLabel.setText(Integer.toString(maxMinesNumber));
             }
 
@@ -82,17 +78,16 @@ class UserSliderFrame extends JFrame {
                 new JSlider(Minesweeper.MIN_ROWS_NUMBER, Minesweeper.MAX_ROWS_NUMBER, Minesweeper.MIN_ROWS_NUMBER);
         heightLabel.setText(Integer.toString(Minesweeper.MIN_ROWS_NUMBER));
         heightLabel.setPreferredSize(preferredSizeForLabel);
-        controller.initRowsNumber(Minesweeper.MIN_ROWS_NUMBER);
+        rowsNumber = Minesweeper.MIN_ROWS_NUMBER;
 
         slider.addChangeListener(e -> {
-            int rowsNumber = slider.getValue();
+            rowsNumber = slider.getValue();
             heightLabel.setText(Integer.toString(rowsNumber));
-            controller.initRowsNumber(rowsNumber);
-            int maxMinesNumber = controller.getMaxMinesNumber();
+            int maxMinesNumber = controller.getMaxMinesNumber(rowsNumber, columnsNumber);
 
             if (maxMinesNumber < minesNumberSlider.getValue()) {
                 minesNumberSlider.setValue(maxMinesNumber);
-                controller.initMinesNumber(maxMinesNumber);
+                minesNumber = maxMinesNumber;
                 minesNumberLabel.setText(Integer.toString(maxMinesNumber));
             }
 
@@ -109,16 +104,15 @@ class UserSliderFrame extends JFrame {
 
     private void addMinesSlider() {
         minesNumberSlider.setMinimum(Minesweeper.MIN_MINES_NUMBER);
-        minesNumberSlider.setMaximum(controller.getMaxMinesNumber());
+        minesNumberSlider.setMaximum(controller.getMaxMinesNumber(rowsNumber, columnsNumber));
         minesNumberSlider.setValue(Minesweeper.MIN_MINES_NUMBER);
         minesNumberLabel.setText(Integer.toString(Minesweeper.MIN_MINES_NUMBER));
         minesNumberLabel.setPreferredSize(preferredSizeForLabel);
-        controller.initMinesNumber(Minesweeper.MIN_MINES_NUMBER);
+        minesNumber = Minesweeper.MIN_MINES_NUMBER;
 
         minesNumberSlider.addChangeListener(e -> {
-            int minesNumber = minesNumberSlider.getValue();
+            minesNumber = minesNumberSlider.getValue();
             minesNumberLabel.setText(Integer.toString(minesNumber));
-            controller.initMinesNumber(minesNumber);
         });
 
         JPanel panel = new JPanel(new GridBagLayout());
@@ -129,4 +123,7 @@ class UserSliderFrame extends JFrame {
         sliderPanel.add(panel, new GBC(0, sliderPanel.getComponentCount()).setAnchor(GBC.WEST));
     }
 
+    boolean isFieldCreated() {
+        return isFieldCreated;
+    }
 }

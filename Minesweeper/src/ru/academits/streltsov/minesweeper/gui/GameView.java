@@ -3,6 +3,7 @@ package ru.academits.streltsov.minesweeper.gui;
 import ru.academits.streltsov.minesweeper.common.View;
 import ru.academits.streltsov.minesweeper.conroller.Controller;
 import ru.academits.streltsov.minesweeper.model.Cell;
+import ru.academits.streltsov.minesweeper.model.HighScores;
 import ru.academits.streltsov.minesweeper.model.Minesweeper;
 import ru.academits.streltsov.minesweeper.model.Winner;
 
@@ -12,31 +13,30 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class GameView extends JFrame implements View {
     private static final ImageIcon FLAG =
-            new ImageIcon("Minesweeper/src/ru/academits/streltsov/minesweeper/resources/Flag.png");
+            new ImageIcon(HighScores.RESOURCES_PATH + "/Flag.png");
     private static final ImageIcon BOMB =
-            new ImageIcon("Minesweeper/src/ru/academits/streltsov/minesweeper/resources/Bomb.png");
+            new ImageIcon(HighScores.RESOURCES_PATH + "/Bomb.png");
     private static final ImageIcon EXPLOSION =
-            new ImageIcon("Minesweeper/src/ru/academits/streltsov/minesweeper/resources/explosion.png");
+            new ImageIcon(HighScores.RESOURCES_PATH + "/explosion.png");
     private static final ImageIcon WRONG_FLAG =
-            new ImageIcon("Minesweeper/src/ru/academits/streltsov/minesweeper/resources/wrongflag.png");
+            new ImageIcon(HighScores.RESOURCES_PATH + "/wrongflag.png");
     private static final ImageIcon QUESTION =
-            new ImageIcon("Minesweeper/src/ru/academits/streltsov/minesweeper/resources/question.png");
+            new ImageIcon(HighScores.RESOURCES_PATH + "question.png");
     private static final Dimension CELL_SIZE = new Dimension(FLAG.getIconWidth(), FLAG.getIconHeight());
 
-    private final ChoiceFrame choiceFrame;
-    private final JPanel fieldPanel = new JPanel(new GridBagLayout());
+    private JPanel fieldPanel = new JPanel(new GridBagLayout());
+    private JPanel informationPanel = new JPanel(new GridLayout(0, 2));
+    private JPanel flagPanel = new JPanel();
+    private JPanel timePanel = new JPanel();
     private Controller controller;
 
-    private JLabel flagLabel;
+    private JLabel flagLabel = new JLabel("0");
     private int flagCount;
     private JLabel timeLabel;
-
-    GameView(ChoiceFrame choiceFrame) {
-        this.choiceFrame = choiceFrame;
-    }
 
     @Override
     public void startApplication() throws FileNotFoundException {
@@ -44,27 +44,69 @@ public class GameView extends JFrame implements View {
         initFrame();
     }
 
+    private void reCreateContent() {
+        fieldPanel.removeAll();
+        flagCount = controller.getMinesNumber();
+        flagLabel.setText(Integer.toString(flagCount));
+        timeLabel.setText(millisecondsToDate(0));
+        controller.printField();
+
+        if (!informationPanel.isVisible()) {
+            informationPanel.setVisible(true);
+        }
+        pack();
+        repaint();
+        revalidate();
+    }
+
+    private void initContent(String level) {
+        if (!level.equals(Minesweeper.USER)) {
+            controller.clearAll();
+            controller.initField(level);
+            reCreateContent();
+
+        } else {
+            UserSliderDialog dialog = new UserSliderDialog(this);
+            dialog.setVisible(true);
+
+            if (dialog.isFieldCreated()) {
+                reCreateContent();
+            } else {
+                controller.renewStartTime();
+                controller.startTimer();
+            }
+        }
+    }
+
     private void initContent() {
         JMenuBar menuBar = new JMenuBar();
         menuBar.setLayout(new BoxLayout(menuBar, BoxLayout.X_AXIS));
 
         JMenu newGameItem = new JMenu("Новая игра");
-        newGameItem.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                if ((e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) != 0) {
-                    choiceFrame.setVisible(true);
-                    setVisible(false);
-                }
-            }
-        });
         menuBar.add(newGameItem);
+
+        ActionListener listener = e -> {
+            JMenuItem source = (JMenuItem) e.getSource();
+            initContent(source.getText());
+        };
+
+        JMenuItem beginner = newGameItem.add(Minesweeper.BEGINNER);
+        beginner.addActionListener(listener);
+
+        JMenuItem amateur = newGameItem.add(Minesweeper.AMATEUR);
+        amateur.addActionListener(listener);
+
+        JMenuItem expert = newGameItem.add(Minesweeper.EXPERT);
+        expert.addActionListener(listener);
+
+        JMenuItem user = newGameItem.add(Minesweeper.USER);
+        user.addActionListener(listener);
 
         JMenu highScoresItem = new JMenu("Таблица рекордов");
         highScoresItem.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if ((e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) != 0) {
+                if (KeyPress.isLeftMouseButtonPressed(e)) {
                     try {
                         showHighScores();
                     } catch (FileNotFoundException ex) {
@@ -80,34 +122,30 @@ public class GameView extends JFrame implements View {
         aboutItem.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if ((e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) != 0) {
+                if (KeyPress.isLeftMouseButtonPressed(e)) {
                     JOptionPane.showMessageDialog(null, "Сапёр");
                 }
             }
         });
         menuBar.add(aboutItem);
+        setJMenuBar(menuBar);
 
-        JPanel flagPanel = new JPanel(new GridBagLayout());
         flagPanel.add(new Label("Флаги:"),
                 new GBC(0, 0).setAnchor(GBC.EAST));
-
-        flagCount = controller.getMinesNumber();
-        flagLabel = new JLabel(String.valueOf(flagCount));
         flagPanel.add(flagLabel, new GBC(1, 0));
+        flagCount = 0;
+        flagLabel.setText(String.valueOf(flagCount));
 
-        JPanel timePanel = new JPanel();
         timePanel.add(new Label("Время:"));
         timeLabel = new JLabel(millisecondsToDate(0));
         timePanel.add(timeLabel);
 
-        JPanel informationPanel = new JPanel(new GridLayout(0, 2));
         informationPanel.add(flagPanel);
         informationPanel.add(timePanel);
+        informationPanel.setVisible(false);
 
-        setJMenuBar(menuBar);
-        add(informationPanel, BorderLayout.NORTH);
-        controller.printField();
         add(fieldPanel, BorderLayout.CENTER);
+        add(informationPanel, BorderLayout.NORTH);
     }
 
     private void initFrame() {
@@ -136,7 +174,7 @@ public class GameView extends JFrame implements View {
                         button.addMouseListener(new MouseAdapter() {
                             @Override
                             public void mousePressed(MouseEvent e) {
-                                if ((e.getModifiersEx() & InputEvent.BUTTON3_DOWN_MASK) != 0) {
+                                if (KeyPress.isRightMouseButtonPressed(e)) {
                                     try {
                                         controller.setMark(button.getRow(), button.getColumn());
                                         --flagCount;
@@ -146,7 +184,7 @@ public class GameView extends JFrame implements View {
                                     } catch (OperationNotSupportedException e1) {
                                         controller.printField();
                                     }
-                                } else if ((e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) != 0) {
+                                } else if (KeyPress.isLeftMouseButtonPressed(e)) {
                                     try {
                                         if (controller.openCell(button.getRow(), button.getColumn())) {
                                             return;
@@ -166,7 +204,7 @@ public class GameView extends JFrame implements View {
                         button.addMouseListener(new MouseAdapter() {
                             @Override
                             public void mousePressed(MouseEvent e) {
-                                if ((e.getModifiersEx() & InputEvent.BUTTON3_DOWN_MASK) != 0) {
+                                if (KeyPress.isRightMouseButtonPressed(e)) {
                                     try {
                                         controller.deleteMark(button.getRow(), button.getColumn());
                                         ++flagCount;
@@ -185,7 +223,7 @@ public class GameView extends JFrame implements View {
                         button.addMouseListener(new MouseAdapter() {
                             @Override
                             public void mousePressed(MouseEvent e) {
-                                if ((e.getModifiersEx() & InputEvent.BUTTON3_DOWN_MASK) != 0) {
+                                if (KeyPress.isRightMouseButtonPressed(e)) {
                                     try {
                                         controller.deleteQuestion(button.getRow(), button.getColumn());
                                         fieldPanel.removeAll();
@@ -199,7 +237,7 @@ public class GameView extends JFrame implements View {
                     }
                 } else {
                     if (!cell.isNoMineNear()) {
-                        button.setIcon(new ImageIcon("Minesweeper/src/ru/academits/streltsov/minesweeper/resources/" +
+                        button.setIcon(new ImageIcon(HighScores.RESOURCES_PATH +
                                 cell.getValue() + ".png"));
                     } else {
                         button.setText(null);
@@ -209,9 +247,8 @@ public class GameView extends JFrame implements View {
                     button.addMouseListener(new MouseAdapter() {
                         @Override
                         public void mousePressed(MouseEvent e) {
-                            if ((e.getModifiersEx() & InputEvent.BUTTON2_DOWN_MASK) != 0 ||
-                                    (((e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) != 0) &&
-                                            ((e.getModifiersEx() & InputEvent.BUTTON3_DOWN_MASK) != 0))) {
+                            if (KeyPress.isMiddleMouseButtonPressed(e) ||
+                                    KeyPress.isRightAndLeftMouseButtonsPressed(e)) {
                                 try {
                                     if (controller.fastOpen(button.getRow(), button.getColumn())) {
                                         return;
@@ -279,8 +316,11 @@ public class GameView extends JFrame implements View {
         ArrayList<Winner> winners = controller.getHighScores(level);
         int i = 1;
         for (Winner winner : winners) {
-            String string = i + ". " + winner.getName() + " " + millisecondsToDate(winner.getTime());
-            stringBuilder.append(string);
+            stringBuilder.append(i);
+            stringBuilder.append(". ");
+            stringBuilder.append(winner.getName());
+            stringBuilder.append(" ");
+            stringBuilder.append(millisecondsToDate(winner.getTime()));
             stringBuilder.append(System.lineSeparator());
             ++i;
         }
@@ -336,12 +376,22 @@ public class GameView extends JFrame implements View {
 
     @Override
     public String getWinnerName() {
-        return JOptionPane.showInputDialog(null, "Введите имя:",
-                "Поставлен рекорд", JOptionPane.QUESTION_MESSAGE);
+        while (true) {
+            String winnerName = JOptionPane.showInputDialog(null, "Введите имя:",
+                    "Поставлен рекорд", JOptionPane.QUESTION_MESSAGE);
+            if (!Objects.equals(winnerName, "") && winnerName != null) {
+                return winnerName;
+            }
+        }
+
     }
 
     @Override
     public void updateTimer(long time) {
         timeLabel.setText(millisecondsToDate(time));
+    }
+
+    Controller getController() {
+        return controller;
     }
 }
