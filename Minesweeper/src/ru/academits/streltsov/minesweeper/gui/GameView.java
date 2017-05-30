@@ -25,8 +25,9 @@ public class GameView extends JFrame implements View {
     private static final ImageIcon WRONG_FLAG =
             new ImageIcon(HighScores.RESOURCES_PATH + "/wrongflag.png");
     private static final ImageIcon QUESTION =
-            new ImageIcon(HighScores.RESOURCES_PATH + "question.png");
+            new ImageIcon(HighScores.RESOURCES_PATH + "/question.png");
     private static final Dimension CELL_SIZE = new Dimension(FLAG.getIconWidth(), FLAG.getIconHeight());
+    private static final String EXIT_COMMAND = "Выход";
 
     private JPanel fieldPanel = new JPanel(new GridBagLayout());
     private JPanel informationPanel = new JPanel(new GridLayout(0, 2));
@@ -34,9 +35,9 @@ public class GameView extends JFrame implements View {
     private JPanel timePanel = new JPanel();
     private Controller controller;
 
-    private JLabel flagLabel = new JLabel("0");
+    private JLabel flagLabel = new JLabel();
     private int flagCount;
-    private JLabel timeLabel;
+    private JLabel timeLabel = new JLabel();
 
     @Override
     public void startApplication() throws FileNotFoundException {
@@ -50,10 +51,6 @@ public class GameView extends JFrame implements View {
         flagLabel.setText(Integer.toString(flagCount));
         timeLabel.setText(millisecondsToDate(0));
         controller.printField();
-
-        if (!informationPanel.isVisible()) {
-            informationPanel.setVisible(true);
-        }
         pack();
         repaint();
         revalidate();
@@ -82,7 +79,7 @@ public class GameView extends JFrame implements View {
         JMenuBar menuBar = new JMenuBar();
         menuBar.setLayout(new BoxLayout(menuBar, BoxLayout.X_AXIS));
 
-        JMenu newGameItem = new JMenu("Новая игра");
+        JMenu newGameItem = new JMenu("Игра");
         menuBar.add(newGameItem);
 
         ActionListener listener = e -> {
@@ -101,6 +98,9 @@ public class GameView extends JFrame implements View {
 
         JMenuItem user = newGameItem.add(Minesweeper.USER);
         user.addActionListener(listener);
+
+        JMenuItem exit = newGameItem.add(EXIT_COMMAND);
+        exit.addActionListener(e -> System.exit(0));
 
         JMenu highScoresItem = new JMenu("Таблица рекордов");
         highScoresItem.addMouseListener(new MouseAdapter() {
@@ -133,17 +133,12 @@ public class GameView extends JFrame implements View {
         flagPanel.add(new Label("Флаги:"),
                 new GBC(0, 0).setAnchor(GBC.EAST));
         flagPanel.add(flagLabel, new GBC(1, 0));
-        flagCount = 0;
-        flagLabel.setText(String.valueOf(flagCount));
-
         timePanel.add(new Label("Время:"));
-        timeLabel = new JLabel(millisecondsToDate(0));
         timePanel.add(timeLabel);
 
         informationPanel.add(flagPanel);
         informationPanel.add(timePanel);
-        informationPanel.setVisible(false);
-
+        initContent(Minesweeper.BEGINNER);
         add(fieldPanel, BorderLayout.CENTER);
         add(informationPanel, BorderLayout.NORTH);
     }
@@ -237,7 +232,7 @@ public class GameView extends JFrame implements View {
                     }
                 } else {
                     if (!cell.isNoMineNear()) {
-                        button.setIcon(new ImageIcon(HighScores.RESOURCES_PATH +
+                        button.setIcon(new ImageIcon(HighScores.RESOURCES_PATH + "/" +
                                 cell.getValue() + ".png"));
                     } else {
                         button.setText(null);
