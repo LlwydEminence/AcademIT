@@ -226,6 +226,20 @@ public class GameView extends JFrame implements View {
                                     } catch (OperationNotSupportedException e1) {
                                         e1.printStackTrace();
                                     }
+                                } else if (KeyPress.isLeftMouseButtonPressed(e)) {
+                                    try {
+                                        controller.deleteQuestion(button.getRow(), button.getColumn());
+                                        if (controller.openCell(button.getRow(), button.getColumn())) {
+                                            return;
+                                        }
+                                        fieldPanel.removeAll();
+                                        controller.printField();
+
+                                    } catch (OperationNotSupportedException e1) {
+                                        controller.printField();
+                                    } catch (FileNotFoundException e1) {
+                                        e1.printStackTrace();
+                                    }
                                 }
                             }
                         });
