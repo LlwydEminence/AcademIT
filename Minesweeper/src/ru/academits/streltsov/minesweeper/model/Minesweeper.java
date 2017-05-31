@@ -413,8 +413,8 @@ public class Minesweeper {
             }
         }
 
-        if (markedCellsNumber < cells[row][column].getValue()) {
-            throw new IllegalArgumentException("Не хватает пометок рядом с ячейкой.");
+        if (markedCellsNumber != cells[row][column].getValue()) {
+            throw new IllegalArgumentException("Число пометок не равно числу на ячейке");
         }
 
         for (int i = row - 1; i <= row + 1; ++i) {

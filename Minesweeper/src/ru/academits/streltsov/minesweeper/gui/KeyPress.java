@@ -17,7 +17,6 @@ class KeyPress {
     }
 
     static boolean isRightAndLeftMouseButtonsPressed(MouseEvent e) {
-        return ((e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) != 0) &&
-        ((e.getModifiersEx() & InputEvent.BUTTON3_DOWN_MASK) != 0);
+        return (isLeftMouseButtonPressed(e) && isRightMouseButtonPressed(e));
     }
 }
