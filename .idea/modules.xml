@@ -6,7 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/ArrayList/ArrayList.iml" filepath="$PROJECT_DIR$/ArrayList/ArrayList.iml" />
       <module fileurl="file://$PROJECT_DIR$/BinarySearchTree/BinarySearchTree.iml" filepath="$PROJECT_DIR$/BinarySearchTree/BinarySearchTree.iml" />
       <module fileurl="file://$PROJECT_DIR$/CSV/CSV.iml" filepath="$PROJECT_DIR$/CSV/CSV.iml" />
-      <module fileurl="file://C:\Users\Бог\IdeaProjects\AcademIT\CashMachineOld\CashMachine.iml" filepath="C:\Users\Бог\IdeaProjects\AcademIT\CashMachineOld\CashMachine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CashMachineOld/CashMachine.iml" filepath="$PROJECT_DIR$/CashMachineOld/CashMachine.iml" />
       <module fileurl="file://$PROJECT_DIR$/CashMachineNew/CashMachineNew.iml" filepath="$PROJECT_DIR$/CashMachineNew/CashMachineNew.iml" />
       <module fileurl="file://$PROJECT_DIR$/CFT/Cft.iml" filepath="$PROJECT_DIR$/CFT/Cft.iml" />
       <module fileurl="file://$PROJECT_DIR$/Graph/Graph.iml" filepath="$PROJECT_DIR$/Graph/Graph.iml" />
@@ -19,6 +19,7 @@
       <module fileurl="file://$PROJECT_DIR$/Shapes/Shapes.iml" filepath="$PROJECT_DIR$/Shapes/Shapes.iml" />
       <module fileurl="file://$PROJECT_DIR$/Temperature/Temperature.iml" filepath="$PROJECT_DIR$/Temperature/Temperature.iml" />
       <module fileurl="file://$PROJECT_DIR$/Vector/Vector.iml" filepath="$PROJECT_DIR$/Vector/Vector.iml" />
+      <module fileurl="file://$PROJECT_DIR$/producerconsumer/producerconsumer.iml" filepath="$PROJECT_DIR$/producerconsumer/producerconsumer.iml" />
     </modules>
   </component>
 </project>
