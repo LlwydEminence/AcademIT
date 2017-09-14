@@ -1,7 +1,7 @@
 package ru.academits.streltsov.minesweeper.gui;
 
 import ru.academits.streltsov.minesweeper.common.View;
-import ru.academits.streltsov.minesweeper.conroller.Controller;
+import ru.academits.streltsov.minesweeper.controller.Controller;
 import ru.academits.streltsov.minesweeper.model.Cell;
 import ru.academits.streltsov.minesweeper.model.HighScores;
 import ru.academits.streltsov.minesweeper.model.Minesweeper;

@@ -1,6 +1,6 @@
 package ru.academits.streltsov.minesweeper.gui;
 
-import ru.academits.streltsov.minesweeper.conroller.Controller;
+import ru.academits.streltsov.minesweeper.controller.Controller;
 import ru.academits.streltsov.minesweeper.model.Minesweeper;
 
 import javax.swing.*;
